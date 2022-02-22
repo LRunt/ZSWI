@@ -1,0 +1,2 @@
+# ZSWI
+Základy softwarového inženýrství
