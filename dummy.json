@@ -1,0 +1,1 @@
+{"description":"Tutorial report","labels":["A","B","C","D"],"prediction_probas":[[10,20,80,47],[10,30,80,51]],"gts":[["C","D"],["A","C","D"]],"report_ids":[0,1]}
