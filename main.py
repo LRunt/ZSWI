@@ -9,13 +9,13 @@ import sys
 import zipfile
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget, QSlider, QLabel
+from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget, QSlider, QLabel, QGridLayout, \
+    QMenuBar, QMainWindow
 
 
-class sliderdemo(QWidget):
+class slider(QWidget):
     def __init__(self, parent=None):
-        super(sliderdemo, self).__init__(parent)
+        super(slider, self).__init__(parent)
 
         layout = QVBoxLayout()
         self.l1 = QLabel("50")
@@ -37,6 +37,38 @@ class sliderdemo(QWidget):
         size = self.sl.value()
         #print(size)
         self.l1.setText(str(size))
+
+class Menu(QWidget):
+    def __init__(self):
+        QWidget.__init__(self)
+        layout = QGridLayout()
+        layout.setSpacing(0)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(layout)
+
+        # create menu
+        menubar = QMenuBar()
+        layout.addWidget(menubar, 0, 0)
+        actionFile = menubar.addMenu("File")
+        actionFile.addAction("New")
+        actionFile.addAction("Open")
+        actionFile.addAction("Save")
+        actionFile.addSeparator()
+        actionFile.addAction("Quit")
+        menubar.addMenu("Edit")
+        menubar.addMenu("View")
+        menubar.addMenu("Help")
+
+class MainWindow(QMainWindow):
+
+    def __init__(self):
+        super(MainWindow, self).__init__()
+
+        self.setWindowTitle("My App")
+
+        myMenu = Menu()
+
+        self.setMenuWidget(myMenu)
 
 """
 Metoda necita data z JSONU, at kompresovana nebo normalni 
@@ -102,27 +134,38 @@ def window():
         i += 1
 
     vbox = QVBoxLayout()
-    vbox.addWidget(table)
+    grid = QGridLayout()
+    grid.setSpacing(0)
+    #grid.setAlignment(0)
+    grid.setContentsMargins(0, 0, 0, 0)
 
-    """mySlider = QSlider(Qt.Horizontal)
-    mySlider.setValue(50)
-    print(mySlider.value())
-    mySlider.setSingleStep(1)
-    mySlider.actionEvent(print_value())"""
+    myMenu = Menu()
 
-    mySlider = sliderdemo();
+    grid.addWidget(myMenu, 0, 0)
+    #vbox.addWidget(myMenu)
+    #vbox.addWidget(table)
 
-    vbox.addWidget(mySlider)
+    grid.addWidget(table, 1, 0)
 
-    window.setLayout(vbox)
+    mySlider = slider();
+
+    grid.addWidget(mySlider, 2, 0)
+    #vbox.addWidget(mySlider)
+
+    window.setLayout(grid)
     window.setWindowTitle("Predikce")
     window.resize(1080, 780)
+
     window.show()
 
     sys.exit(app.exec_())
 
-def print_value():
-    print("hehe")
-
 if __name__ == "__main__":
     window()
+
+    """
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    app.exec()
+    """
