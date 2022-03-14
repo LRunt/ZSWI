@@ -7,8 +7,36 @@
 import json
 import sys
 import zipfile
-
 from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget, QSlider, QLabel
+
+
+class sliderdemo(QWidget):
+    def __init__(self, parent=None):
+        super(sliderdemo, self).__init__(parent)
+
+        layout = QVBoxLayout()
+        self.l1 = QLabel("50")
+        self.l1.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self.l1)
+
+        self.sl = QSlider(Qt.Horizontal)
+        self.sl.setMinimum(0)
+        self.sl.setMaximum(100)
+        self.sl.setValue(50)
+        self.sl.setTickPosition(QSlider.TicksBelow)
+        self.sl.setTickInterval(1)
+
+        layout.addWidget(self.sl)
+        self.sl.valueChanged.connect(self.valuechange)
+        self.setLayout(layout)
+
+    def valuechange(self):
+        size = self.sl.value()
+        #print(size)
+        self.l1.setText(str(size))
 
 """
 Metoda necita data z JSONU, at kompresovana nebo normalni 
@@ -23,54 +51,78 @@ def load_data(path):
             data = json.load(json_file)
     return data
 
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-
-    #nacitani dat z JSONU
+def window():
+    # nacitani dat z JSONU
     data = load_data('dummy.json.zip')
-    #ulozeni hlavicky tabulky
-    labels =["report_ids"] + data["labels"] + ["gts"]
+    # ulozeni hlavicky tabulky
+    labels = ["report_ids"] + data["labels"] + ["gts"]
     gts = data["gts"]
     report_ids = data["report_ids"]
     prediction_probas = data["prediction_probas"]
     label = data["labels"]
 
-    w = QtWidgets.QTableWidget(0, len(labels))
-    w.setHorizontalHeaderLabels(labels)
+    app = QApplication(sys.argv)
+
+    window = QWidget()
+
+    table = QtWidgets.QTableWidget(0, len(labels))
+    table.setHorizontalHeaderLabels(labels)
     i = 0
 
     for x in gts:
         j = 0
-        #vlozeni id
-        w.insertRow(w.rowCount())
+        # vlozeni id
+        table.insertRow(table.rowCount())
         it = QtWidgets.QTableWidgetItem()
         it.setData(QtCore.Qt.DisplayRole, report_ids[i])
         it.setFlags(QtCore.Qt.ItemIsEnabled)
-        w.setItem(i, j, it)
+        table.setItem(i, j, it)
         j += 1
-        #vlozeni predikci
+        # vlozeni predikci
         for y in label:
             it = QtWidgets.QTableWidgetItem()
             predikce = prediction_probas[i][j - 1]
             it.setData(QtCore.Qt.DisplayRole, predikce)
-            #zakazani editovani bunky
+            # zakazani editovani bunky
             it.setFlags(QtCore.Qt.ItemIsEnabled)
-            w.setItem(i, j, it)
+            table.setItem(i, j, it)
             j += 1
         str = ""
         k = 0
-        #clozeni spravnych vysledku
+        # clozeni spravnych vysledku
         for z in gts[i]:
             str += gts[i][k] + ", "
             k += 1
-        #odstraneni posledni carky
+        # odstraneni posledni carky
         str = str[:-2]
         it = QtWidgets.QTableWidgetItem()
         it.setData(QtCore.Qt.DisplayRole, str)
         it.setFlags(QtCore.Qt.ItemIsEnabled)
-        w.setItem(i, j, it)
+        table.setItem(i, j, it)
         i += 1
 
-    w.resize(1080, 780)
-    w.show()
-    sys.exit( app.exec_())
+    vbox = QVBoxLayout()
+    vbox.addWidget(table)
+
+    """mySlider = QSlider(Qt.Horizontal)
+    mySlider.setValue(50)
+    print(mySlider.value())
+    mySlider.setSingleStep(1)
+    mySlider.actionEvent(print_value())"""
+
+    mySlider = sliderdemo();
+
+    vbox.addWidget(mySlider)
+
+    window.setLayout(vbox)
+    window.setWindowTitle("Predikce")
+    window.resize(1080, 780)
+    window.show()
+
+    sys.exit(app.exec_())
+
+def print_value():
+    print("hehe")
+
+if __name__ == "__main__":
+    window()
