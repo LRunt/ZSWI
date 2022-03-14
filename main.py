@@ -6,16 +6,28 @@
 #imports
 import json
 import sys
+import zipfile
+
 from PyQt5 import QtCore, QtWidgets
+
+"""
+Metoda necita data z JSONU, at kompresovana nebo normalni 
+"""
+def load_data(path):
+    if path.endswith(".zip"):
+        with zipfile.ZipFile(path) as zf:
+            jsonstring = zf.read(zf.filelist[0]).decode('utf-8')
+        data = json.loads(jsonstring)
+    else:
+        with open(path, 'r') as json_file:
+            data = json.load(json_file)
+    return data
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
 
     #nacitani dat z JSONU
-    f = open('dummy.json', "r")
-    d = f.read()
-    f.close()
-    data = json.loads(d)
+    data = load_data('dummy.json.zip')
     #ulozeni hlavicky tabulky
     labels =["report_ids"] + data["labels"] + ["gts"]
     gts = data["gts"]
@@ -59,6 +71,6 @@ if __name__ == "__main__":
         w.setItem(i, j, it)
         i += 1
 
-    w.resize(640, 480)
+    w.resize(1080, 780)
     w.show()
     sys.exit( app.exec_())
