@@ -59,6 +59,65 @@ class Menu(QWidget):
         menubar.addMenu("View")
         menubar.addMenu("Help")
 
+class MyTable(QWidget):
+    def __init__(self):
+        QWidget.__init__(self)
+
+        layout = QGridLayout()
+        layout.setSpacing(0)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(layout)
+
+        # nacitani dat z JSONU
+        data = load_data('report_cnn_512_lite_scenario3.json.zip')
+        # ulozeni hlavicky tabulky
+        labels = ["report_ids"] + ["gts"] #data["labels"] +
+        gts = data["gts"]
+        report_ids = data["report_ids"]
+        prediction_probas = data["prediction_probas"]
+        label = data["labels"]
+
+        table = QtWidgets.QTableWidget(0, len(labels))
+        table.setHorizontalHeaderLabels(labels)
+        i = 0
+
+        for x in gts:
+            j = 0
+            # vlozeni id
+            table.insertRow(table.rowCount())
+            it = QtWidgets.QTableWidgetItem()
+            it.setData(QtCore.Qt.DisplayRole, report_ids[i])
+            it.setFlags(QtCore.Qt.ItemIsEnabled)
+            table.setItem(i, j, it)
+            j += 1
+            # vlozeni predikci
+            """
+            for y in label:
+                it = QtWidgets.QTableWidgetItem()
+                predikce = prediction_probas[i][j - 1]
+                it.setData(QtCore.Qt.DisplayRole, predikce)
+                # zakazani editovani bunky
+                it.setFlags(QtCore.Qt.ItemIsEnabled)
+                table.setItem(i, j, it)
+                j += 1
+            """
+            str = ""
+            k = 0
+            # clozeni spravnych vysledku
+            for z in gts[i]:
+                str += gts[i][k] + ", "
+                k += 1
+            # odstraneni posledni carky
+            str = str[:-2]
+            it = QtWidgets.QTableWidgetItem()
+            it.setData(QtCore.Qt.DisplayRole, str)
+            it.setFlags(QtCore.Qt.ItemIsEnabled)
+            table.setItem(i, j, it)
+            i += 1
+
+            layout.addWidget(table, 0, 0)
+
+
 class MainWindow(QMainWindow):
 
     def __init__(self):
@@ -67,6 +126,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("My App")
 
         myMenu = Menu()
+        myTable = MyTable()
 
         self.setMenuWidget(myMenu)
 
@@ -84,54 +144,7 @@ def load_data(path):
     return data
 
 def window():
-    # nacitani dat z JSONU
-    data = load_data('dummy.json.zip')
-    # ulozeni hlavicky tabulky
-    labels = ["report_ids"] + data["labels"] + ["gts"]
-    gts = data["gts"]
-    report_ids = data["report_ids"]
-    prediction_probas = data["prediction_probas"]
-    label = data["labels"]
-
     app = QApplication(sys.argv)
-
-    window = QWidget()
-
-    table = QtWidgets.QTableWidget(0, len(labels))
-    table.setHorizontalHeaderLabels(labels)
-    i = 0
-
-    for x in gts:
-        j = 0
-        # vlozeni id
-        table.insertRow(table.rowCount())
-        it = QtWidgets.QTableWidgetItem()
-        it.setData(QtCore.Qt.DisplayRole, report_ids[i])
-        it.setFlags(QtCore.Qt.ItemIsEnabled)
-        table.setItem(i, j, it)
-        j += 1
-        # vlozeni predikci
-        for y in label:
-            it = QtWidgets.QTableWidgetItem()
-            predikce = prediction_probas[i][j - 1]
-            it.setData(QtCore.Qt.DisplayRole, predikce)
-            # zakazani editovani bunky
-            it.setFlags(QtCore.Qt.ItemIsEnabled)
-            table.setItem(i, j, it)
-            j += 1
-        str = ""
-        k = 0
-        # clozeni spravnych vysledku
-        for z in gts[i]:
-            str += gts[i][k] + ", "
-            k += 1
-        # odstraneni posledni carky
-        str = str[:-2]
-        it = QtWidgets.QTableWidgetItem()
-        it.setData(QtCore.Qt.DisplayRole, str)
-        it.setFlags(QtCore.Qt.ItemIsEnabled)
-        table.setItem(i, j, it)
-        i += 1
 
     vbox = QVBoxLayout()
     grid = QGridLayout()
@@ -140,18 +153,20 @@ def window():
     grid.setContentsMargins(0, 0, 0, 0)
 
     myMenu = Menu()
+    myTable = MyTable()
 
     grid.addWidget(myMenu, 0, 0)
     #vbox.addWidget(myMenu)
     #vbox.addWidget(table)
 
-    grid.addWidget(table, 1, 0)
+    grid.addWidget(myTable, 1, 0)
 
-    mySlider = slider();
+    mySlider = slider()
 
     grid.addWidget(mySlider, 2, 0)
     #vbox.addWidget(mySlider)
 
+    window = QWidget()
     window.setLayout(grid)
     window.setWindowTitle("Predikce")
     window.resize(1080, 780)
