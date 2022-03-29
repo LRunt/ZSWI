@@ -12,16 +12,20 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget, QSlider, QLabel, QGridLayout, \
     QMenuBar, QMainWindow
 
-
-class slider(QWidget):
+"""
+Trida Slider se stara o vykreslovani slideru
+"""
+class Slider(QWidget):
     def __init__(self, parent=None):
-        super(slider, self).__init__(parent)
+        super(Slider, self).__init__(parent)
 
+        #nastaveni layoutu a defaultni hodnoty po nacteni
         layout = QVBoxLayout()
         self.l1 = QLabel("50")
         self.l1.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.l1)
 
+        #nastaveni slideru
         self.sl = QSlider(Qt.Horizontal)
         self.sl.setMinimum(0)
         self.sl.setMaximum(100)
@@ -29,15 +33,20 @@ class slider(QWidget):
         self.sl.setTickPosition(QSlider.TicksBelow)
         self.sl.setTickInterval(1)
 
+        #propojeni labelu a slideru
         layout.addWidget(self.sl)
         self.sl.valueChanged.connect(self.valuechange)
         self.setLayout(layout)
 
+    #promitnuti zmeny hodnoty
     def valuechange(self):
         size = self.sl.value()
         #print(size)
         self.l1.setText(str(size))
 
+"""
+Trida Menu se stara o vykreslovani menu - cele zkopirovano z netu
+"""
 class Menu(QWidget):
     def __init__(self):
         QWidget.__init__(self)
@@ -59,10 +68,14 @@ class Menu(QWidget):
         menubar.addMenu("View")
         menubar.addMenu("Help")
 
+"""
+Trida MyTable se stara o vykreslovani tabulky
+"""
 class MyTable(QWidget):
+    #konstruktor
     def __init__(self):
         QWidget.__init__(self)
-
+        #nastaveni layoutu, ktery se bude predavat oknu
         layout = QGridLayout()
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -77,20 +90,24 @@ class MyTable(QWidget):
         prediction_probas = data["prediction_probas"]
         label = data["labels"]
 
+        #nastaveni poctu sloupu a vlozeni textu do sloupcu
         table = QtWidgets.QTableWidget(0, len(labels))
         table.setHorizontalHeaderLabels(labels)
         i = 0
 
-        for x in gts:
+        #vkladani dat do tabulky
+        for j in gts:
             j = 0
             # vlozeni id
             table.insertRow(table.rowCount())
             it = QtWidgets.QTableWidgetItem()
             it.setData(QtCore.Qt.DisplayRole, report_ids[i])
+            #zamezeni zmeny dat v bunce
             it.setFlags(QtCore.Qt.ItemIsEnabled)
+            #nastaveni na prislusne misto
             table.setItem(i, j, it)
             j += 1
-            # vlozeni predikci
+            # vlozeni sloupecku predikci - zatim zakomentovano, kvuli rychlostnim pozadavkum
             """
             for y in label:
                 it = QtWidgets.QTableWidgetItem()
@@ -103,7 +120,7 @@ class MyTable(QWidget):
             """
             str = ""
             k = 0
-            # clozeni spravnych vysledku
+            # vlozeni spravnych vysledku predikci
             for z in gts[i]:
                 str += gts[i][k] + ", "
                 k += 1
@@ -117,18 +134,13 @@ class MyTable(QWidget):
 
             layout.addWidget(table, 0, 0)
 
-
+"""
+Trida predstavujici okno
+"""
 class MainWindow(QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
-
-        self.setWindowTitle("My App")
-
-        myMenu = Menu()
-        myTable = MyTable()
-
-        self.setMenuWidget(myMenu)
 
 """
 Metoda necita data z JSONU, at kompresovana nebo normalni 
@@ -143,29 +155,35 @@ def load_data(path):
             data = json.load(json_file)
     return data
 
+"""
+Metoda se stara o okno (velikost, text v titulku...) a sestavuje komponenty
+"""
 def window():
     app = QApplication(sys.argv)
 
+    """
     vbox = QVBoxLayout()
+    vbox.addWidget(myMenu)
+    vbox.addWidget(table)
+    #vbox.addWidget(mySlider)
+    """
+
+    #vytvoreni gridu
     grid = QGridLayout()
+    #nastaveni mezer (jak daleko od okraje se budou vyreslovat komponenty)
     grid.setSpacing(0)
-    #grid.setAlignment(0)
     grid.setContentsMargins(0, 0, 0, 0)
 
+    #vytvoreni komponent
     myMenu = Menu()
     myTable = MyTable()
-
+    mySlider = Slider()
+    #pridani komponent do gridu
     grid.addWidget(myMenu, 0, 0)
-    #vbox.addWidget(myMenu)
-    #vbox.addWidget(table)
-
     grid.addWidget(myTable, 1, 0)
-
-    mySlider = slider()
-
     grid.addWidget(mySlider, 2, 0)
-    #vbox.addWidget(mySlider)
 
+    #pridani gridu do okna
     window = QWidget()
     window.setLayout(grid)
     window.setWindowTitle("Predikce")
@@ -175,6 +193,7 @@ def window():
 
     sys.exit(app.exec_())
 
+#vstupni bod programu
 if __name__ == "__main__":
     window()
 
