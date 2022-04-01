@@ -84,7 +84,7 @@ class MyTable(QWidget):
         # nacitani dat z JSONU
         data = load_data('report_cnn_512_lite_scenario3.json.zip')
         # ulozeni hlavicky tabulky
-        labels = ["report_ids"] + ["gts"] #data["labels"] +
+        labels = ["report_ids"] + data["labels"]+ ["gts"] + ["prediction"]
         gts = data["gts"]
         report_ids = data["report_ids"]
         prediction_probas = data["prediction_probas"]
@@ -94,6 +94,9 @@ class MyTable(QWidget):
         table = QtWidgets.QTableWidget(0, len(labels))
         table.setHorizontalHeaderLabels(labels)
         i = 0
+
+        prediction = self.compute_treshold(prediction_probas, data["labels"], 50)
+
 
         #vkladani dat do tabulky
         for j in gts:
@@ -108,7 +111,6 @@ class MyTable(QWidget):
             table.setItem(i, j, it)
             j += 1
             # vlozeni sloupecku predikci - zatim zakomentovano, kvuli rychlostnim pozadavkum
-            """
             for y in label:
                 it = QtWidgets.QTableWidgetItem()
                 predikce = prediction_probas[i][j - 1]
@@ -117,7 +119,7 @@ class MyTable(QWidget):
                 it.setFlags(QtCore.Qt.ItemIsEnabled)
                 table.setItem(i, j, it)
                 j += 1
-            """
+
             str = ""
             k = 0
             # vlozeni spravnych vysledku predikci
@@ -130,9 +132,38 @@ class MyTable(QWidget):
             it.setData(QtCore.Qt.DisplayRole, str)
             it.setFlags(QtCore.Qt.ItemIsEnabled)
             table.setItem(i, j, it)
-            i += 1
 
+            #diagnozy vyhodnocene podle prahu
+            j += 1
+            it = QtWidgets.QTableWidgetItem()
+            it.setData(QtCore.Qt.DisplayRole, prediction[i])
+            it.setFlags(QtCore.Qt.ItemIsEnabled)
+            table.setItem(i, j, it)
+            i += 1
             layout.addWidget(table, 0, 0)
+
+    """
+    Metoda vyhodnocuje podle tresholdu ktere predikce budou vyhodnoceny jako pozitivny
+    @param prediction_probas data pradikcí
+    @param prediction_label jmena predikci
+    @param treshold prah podle ktereho se vyhodnocuje zda bude predikce pozitivni nebo ne
+    @return pole (list) stringu, ktere znazornuji pozitivni diagnozy
+    """
+    def compute_treshold(self, prediction_probas, prediction_label, threshold):
+        evaluated_predictions = []
+        str_of_one_prediction = ""
+
+        for i in range(len(prediction_probas)):
+            for j in range(len(prediction_probas[i])):
+                #porovnavani zda hodnota presahne prah
+                if(prediction_probas[i][j] > threshold):
+                    #pridani diagnozi do stringu diagnoz
+                    str_of_one_prediction += prediction_label[j] + ", ";
+            # odstraneni posledni carky
+            str_of_one_prediction = str_of_one_prediction[:-2]
+            evaluated_predictions.append(str_of_one_prediction)
+            str_of_one_prediction = ""
+        return evaluated_predictions
 
 """
 Trida predstavujici okno
@@ -144,6 +175,7 @@ class MainWindow(QMainWindow):
 
 """
 Metoda necita data z JSONU, at kompresovana nebo normalni 
+@return data from JSON
 """
 def load_data(path):
     if path.endswith(".zip"):
