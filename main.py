@@ -8,9 +8,9 @@ import json
 import sys
 import zipfile
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QCoreApplication
 from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget, QSlider, QLabel, QGridLayout, \
-    QMenuBar, QMainWindow
+    QMenuBar, QMainWindow, QTableView, QTableWidget, QStyledItemDelegate, QAction
 
 """
 Trida Slider se stara o vykreslovani slideru
@@ -63,18 +63,22 @@ class Menu(QWidget):
         actionFile.addAction("Open")
         actionFile.addAction("Save")
         actionFile.addSeparator()
-        actionFile.addAction("Quit")
+        actionFile.addAction("Quit").triggered.connect(self.turnOf)
+
         menubar.addMenu("Edit")
         menubar.addMenu("View")
         menubar.addMenu("Help")
 
+    def turnOf(self):
+        QCoreApplication.quit()
+
 """
 Trida MyTable se stara o vykreslovani tabulky
 """
-class MyTable(QWidget):
+class MyTable(QTableView):
     #konstruktor
     def __init__(self):
-        QWidget.__init__(self)
+        QTableView.__init__(self)
         #nastaveni layoutu, ktery se bude predavat oknu
         layout = QGridLayout()
         layout.setSpacing(0)
@@ -82,7 +86,7 @@ class MyTable(QWidget):
         self.setLayout(layout)
 
         # nacitani dat z JSONU
-        data = load_data('report_cnn_512_lite_scenario3.json.zip')
+        data = load_data('Data/dummy.json.zip')
         # ulozeni hlavicky tabulky
         labels = ["report_ids"] + data["labels"]+ ["gts"] + ["prediction"]
         gts = data["gts"]
@@ -97,6 +101,7 @@ class MyTable(QWidget):
 
         prediction = self.compute_treshold(prediction_probas, data["labels"], 50)
 
+        table.selectionModel().selectionChanged.connect(self.on_selectionChanged)
 
         #vkladani dat do tabulky
         for j in gts:
@@ -106,7 +111,10 @@ class MyTable(QWidget):
             it = QtWidgets.QTableWidgetItem()
             it.setData(QtCore.Qt.DisplayRole, report_ids[i])
             #zamezeni zmeny dat v bunce
-            it.setFlags(QtCore.Qt.ItemIsEnabled)
+            #it.setFlags(QtCore.Qt.ItemIsEnabled)
+            #it.setFlags(QtCore.Qt.ItemIsSelectable)
+            #it.setFlags(QtCore.Qt.ItemSelectionMode)
+            it.setSelected(True)
             #nastaveni na prislusne misto
             table.setItem(i, j, it)
             j += 1
@@ -140,6 +148,7 @@ class MyTable(QWidget):
             it.setFlags(QtCore.Qt.ItemIsEnabled)
             table.setItem(i, j, it)
             i += 1
+
             layout.addWidget(table, 0, 0)
 
     """
@@ -164,6 +173,9 @@ class MyTable(QWidget):
             evaluated_predictions.append(str_of_one_prediction)
             str_of_one_prediction = ""
         return evaluated_predictions
+
+    def on_selectionChanged(selfself, selected):
+        print("hehe")
 
 """
 Trida predstavujici okno
