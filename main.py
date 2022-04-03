@@ -12,6 +12,8 @@ from PyQt5.QtCore import Qt, QCoreApplication
 from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget, QSlider, QLabel, QGridLayout, \
     QMenuBar, QMainWindow, QTableView, QTableWidget, QStyledItemDelegate, QAction
 
+from DetailViewer import DetailViewer
+
 """
 Trida Slider se stara o vykreslovani slideru
 """
@@ -222,10 +224,13 @@ def window():
     myMenu = Menu()
     myTable = MyTable()
     mySlider = Slider()
+    descriptionData = load_data('Data/dummy_texts.json.zip')
+    detailViewer = DetailViewer(descriptionData)
     #pridani komponent do gridu
     grid.addWidget(myMenu, 0, 0)
-    grid.addWidget(myTable, 1, 0)
-    grid.addWidget(mySlider, 2, 0)
+    grid.addWidget(detailViewer, 1, 0)
+    grid.addWidget(myTable, 2, 0)
+    grid.addWidget(mySlider, 3, 0)
 
     #pridani gridu do okna
     window = QWidget()
