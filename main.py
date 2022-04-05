@@ -12,6 +12,7 @@ from PyQt5.QtCore import Qt, QCoreApplication
 from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget, QSlider, QLabel, QGridLayout, \
     QMenuBar, QMainWindow, QTableView, QTableWidget, QStyledItemDelegate, QAction
 
+from ColumnFilter import ColumnFilter
 from DetailViewer import DetailViewer
 
 """
@@ -50,8 +51,15 @@ class Slider(QWidget):
 Trida Menu se stara o vykreslovani menu - cele zkopirovano z netu
 """
 class Menu(QWidget):
-    def __init__(self):
+
+    colFilter = None
+
+    def __init__(self, tb):
         QWidget.__init__(self)
+
+        self.table = QtWidgets.QTableWidget()
+        self.table = tb
+
         layout = QGridLayout()
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -69,7 +77,14 @@ class Menu(QWidget):
 
         menubar.addMenu("Edit")
         menubar.addMenu("View")
+        settingsFile = menubar.addMenu("Settings")
+        settingsFile.addAction("Column settings")
+        settingsFile.triggered[QAction].connect(self.processTrigger)
         menubar.addMenu("Help")
+
+    def processTrigger(self):
+        self.colFilter = ColumnFilter(self.table)
+        self.colFilter.show()
 
     def turnOf(self):
         QCoreApplication.quit()
@@ -78,6 +93,9 @@ class Menu(QWidget):
 Trida MyTable se stara o vykreslovani tabulky
 """
 class MyTable(QTableView):
+
+    table = None
+
     #konstruktor
     def __init__(self):
         QTableView.__init__(self)
@@ -90,26 +108,28 @@ class MyTable(QTableView):
         # nacitani dat z JSONU
         data = load_data('Data/dummy.json.zip')
         # ulozeni hlavicky tabulky
-        labels = ["report_ids"] + data["labels"]+ ["gts"] + ["prediction"]
+        labels = ["report_ids"] + data["labels"] + ["gts"] + ["prediction"]
         gts = data["gts"]
         report_ids = data["report_ids"]
         prediction_probas = data["prediction_probas"]
         label = data["labels"]
 
         #nastaveni poctu sloupu a vlozeni textu do sloupcu
-        table = QtWidgets.QTableWidget(0, len(labels))
-        table.setHorizontalHeaderLabels(labels)
+        self.table = QtWidgets.QTableWidget(0, len(labels))
+
+
+        self.table.setHorizontalHeaderLabels(labels)
         i = 0
 
         prediction = self.compute_treshold(prediction_probas, data["labels"], 50)
 
-        table.selectionModel().selectionChanged.connect(self.on_selectionChanged)
+        self.table.selectionModel().selectionChanged.connect(self.on_selectionChanged)
 
         #vkladani dat do tabulky
         for j in gts:
             j = 0
             # vlozeni id
-            table.insertRow(table.rowCount())
+            self.table.insertRow(self.table.rowCount())
             it = QtWidgets.QTableWidgetItem()
             it.setData(QtCore.Qt.DisplayRole, report_ids[i])
             #zamezeni zmeny dat v bunce
@@ -118,16 +138,17 @@ class MyTable(QTableView):
             #it.setFlags(QtCore.Qt.ItemSelectionMode)
             it.setSelected(True)
             #nastaveni na prislusne misto
-            table.setItem(i, j, it)
+            self.table.setItem(i, j, it)
             j += 1
             # vlozeni sloupecku predikci - zatim zakomentovano, kvuli rychlostnim pozadavkum
+
             for y in label:
                 it = QtWidgets.QTableWidgetItem()
                 predikce = prediction_probas[i][j - 1]
                 it.setData(QtCore.Qt.DisplayRole, predikce)
                 # zakazani editovani bunky
                 it.setFlags(QtCore.Qt.ItemIsEnabled)
-                table.setItem(i, j, it)
+                self.table.setItem(i, j, it)
                 j += 1
 
             str = ""
@@ -141,17 +162,20 @@ class MyTable(QTableView):
             it = QtWidgets.QTableWidgetItem()
             it.setData(QtCore.Qt.DisplayRole, str)
             it.setFlags(QtCore.Qt.ItemIsEnabled)
-            table.setItem(i, j, it)
+            self.table.setItem(i, j, it)
 
             #diagnozy vyhodnocene podle prahu
             j += 1
             it = QtWidgets.QTableWidgetItem()
             it.setData(QtCore.Qt.DisplayRole, prediction[i])
             it.setFlags(QtCore.Qt.ItemIsEnabled)
-            table.setItem(i, j, it)
+            self.table.setItem(i, j, it)
             i += 1
 
-            layout.addWidget(table, 0, 0)
+            layout.addWidget(self.table, 0, 0)
+
+    def getTable(self):
+        return self.table
 
     """
     Metoda vyhodnocuje podle tresholdu ktere predikce budou vyhodnoceny jako pozitivny
@@ -221,8 +245,16 @@ def window():
     grid.setContentsMargins(0, 0, 0, 0)
 
     #vytvoreni komponent
-    myMenu = Menu()
+
     myTable = MyTable()
+
+    #####
+
+    tb = myTable.getTable()
+    myMenu = Menu(tb)
+
+    #####
+
     mySlider = Slider()
     descriptionData = load_data('Data/dummy_texts.json.zip')
     detailViewer = DetailViewer(descriptionData)

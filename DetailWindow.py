@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QGridLayout
+from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QGridLayout, QTextEdit
 
 
 class DetailWindow(QWidget):
@@ -9,17 +10,20 @@ class DetailWindow(QWidget):
         # vytvoreni gridu
         grid = QGridLayout()
         #nastaveni gridu
-        grid.setSpacing(0)
-        grid.setContentsMargins(0, 0, 0, 0)
+        grid.setSpacing(10)
+        grid.setContentsMargins(10, 10, 10, 10)
 
-        self.labelId = QLabel("ID:")
-        self.id = QLabel(str(id))
-        self.labelText = QLabel("Text:")
-        self.text = QLabel(text)
+        self.labelId = QLabel("ID: " + str(id))
+        #self.id = QLabel(str(id))
+        #self.labelText = QLabel("Text:")
+        self.text = QTextEdit(text)
+
+        self.labelId.setFont(QFont('Arial', 10))
+        self.text.setFont(QFont('Arial', 10))
 
         grid.addWidget(self.labelId, 0, 0)
-        grid.addWidget(self.id, 0, 1)
-        grid.addWidget(self.labelText, 1, 0)
-        grid.addWidget(self.text, 1, 1)
+        #grid.addWidget(self.id, 0, 1)
+        #rid.addWidget(self.labelText, 2, 0)
+        grid.addWidget(self.text, 1, 0)
 
         self.setLayout(grid)
