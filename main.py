@@ -14,154 +14,16 @@ from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget, QSlider, QLabel,
 
 from ColumnFilter import ColumnFilter
 from DetailViewer import DetailViewer
-
-"""
-Trida Slider se stara o vykreslovani slideru
-"""
-import sys
-from decimal import Decimal, ROUND_HALF_UP
-from PyQt5 import QtCore, QtGui, QtWidgets
-
-
-class DoublespinboxAndSlider(QtWidgets.QWidget):
-    def __init__(self, parent = None, minimum=0, maximum=100, step=1):
-        super(DoublespinboxAndSlider, self).__init__(parent)
-
-        size_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
-
-        self.label = QtWidgets.QLabel('Label', self)
-        self.label.setSizePolicy(size_policy)
-
-        self.double_spinbox = QtWidgets.QDoubleSpinBox(self)
-        self.double_spinbox.setSizePolicy(size_policy)
-
-        self.slider = QtWidgets.QSlider(self)
-        self.slider.setOrientation(QtCore.Qt.Horizontal)
-        self.slider.setSizePolicy(size_policy)
-
-        self.double_spinbox.valueChanged.connect(self.double_spinbox_changed)
-        self.slider.valueChanged.connect(self.slider_changed)
-
-        self.vertical_layout = QtWidgets.QVBoxLayout(self)
-        self.vertical_layout.addWidget(self.label)
-        self.vertical_layout.addWidget(self.double_spinbox)
-        self.vertical_layout.addWidget(self.slider)
-
-        self.set_single_step(step)
-        self.slider.setMinimum(0)
-        self.set_minimum(minimum)
-        self.set_maximum(maximum)
-
-    def set_maximum(self, value):
-        self.double_spinbox.setMaximum(value)
-        self.set_slider_maximum()
-
-    def set_minimum(self, value):
-        self.double_spinbox.setMinimum(value)
-        self.set_slider_maximum()
-
-    def set_single_step(self, value):
-        self.double_spinbox.setSingleStep(value)
-        self.double_spinbox.setDecimals(len(str(value).split('.')[-1]))
-        self.set_slider_maximum()
-
-    def set_slider_maximum(self):
-        double_spinbox_range = self.double_spinbox.maximum() - self.double_spinbox.minimum()
-        slider_max = double_spinbox_range / self.double_spinbox.singleStep()
-        self.slider.setMaximum(int(slider_max))
-
-    def slider_changed(self, value):
-        value2 = self.round2(float(value) * self.double_spinbox.singleStep())
-        self.double_spinbox.setValue(value2)
-
-    def double_spinbox_changed(self, value):
-        value2 = int(self.round2(value / self.double_spinbox.singleStep()))
-        self.slider.setValue(value2)
-
-    def round2(self, value):
-        dicimals = str(self.double_spinbox.singleStep() / 10.0)
-        value2 = float(Decimal(str(value)).quantize(Decimal(dicimals), rounding=ROUND_HALF_UP))
-        return value2
-
-    def set_maximum(self, value):
-        self.double_spinbox.setMaximum(value)
-        self.set_slider_maximum()
-
-    def set_minimum(self, value):
-        self.double_spinbox.setMinimum(value)
-        self.set_slider_maximum()
-
-    def set_single_step(self, value):
-        self.double_spinbox.setSingleStep(value)
-        self.double_spinbox.setDecimals(len(str(value).split('.')[-1]))
-        self.set_slider_maximum()
-
-    def set_slider_maximum(self):
-        double_spinbox_range = self.double_spinbox.maximum() - self.double_spinbox.minimum()
-        slider_max = double_spinbox_range / self.double_spinbox.singleStep()
-        self.slider.setMaximum(int(slider_max))
-
-    def slider_changed(self, value):
-        value2 = self.round2(float(value) * self.double_spinbox.singleStep())
-        self.double_spinbox.setValue(value2)
-
-    def double_spinbox_changed(self, value):
-        value2 = int(self.round2(value / self.double_spinbox.singleStep()))
-        self.slider.setValue(value2)
-
-    def round2(self, value):
-        dicimals = str(self.double_spinbox.singleStep() / 10.0)
-        value2 = float(Decimal(str(value)).quantize(Decimal(dicimals), rounding=ROUND_HALF_UP))
-        return value2
+from DoublespinboxAndSlider import DoublespinboxAndSlider
+from Menu import Menu
 
 
 
-"""
-Trida Menu se stara o vykreslovani menu - cele zkopirovano z netu
-"""
-class Menu(QWidget):
-
-    colFilter = None
-
-    def __init__(self, tb):
-        QWidget.__init__(self)
-
-        self.table = QtWidgets.QTableWidget()
-        self.table = tb
-
-        layout = QGridLayout()
-        layout.setSpacing(0)
-        layout.setContentsMargins(0, 0, 0, 0)
-        self.setLayout(layout)
-
-        # create menu
-        menubar = QMenuBar()
-        layout.addWidget(menubar, 0, 0)
-        actionFile = menubar.addMenu("File")
-        actionFile.addAction("New")
-        actionFile.addAction("Open")
-        actionFile.addAction("Save")
-        actionFile.addSeparator()
-        actionFile.addAction("Quit").triggered.connect(self.turnOf)
-
-        menubar.addMenu("Edit")
-        menubar.addMenu("View")
-        settingsFile = menubar.addMenu("Settings")
-        settingsFile.addAction("Column settings")
-        settingsFile.triggered[QAction].connect(self.processTrigger)
-        menubar.addMenu("Help")
-
-    def processTrigger(self):
-        self.colFilter = ColumnFilter(self.table)
-        self.colFilter.show()
-
-    def turnOf(self):
-        QCoreApplication.quit()
-
-"""
-Trida MyTable se stara o vykreslovani tabulky
-"""
 class MyTable(QTableView):
+    """
+    Trida MyTable se stara o vykreslovani tabulky
+    """
+
 
     table = None
 
@@ -173,6 +35,7 @@ class MyTable(QTableView):
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
+
 
         # nacitani dat z JSONU
         data = load_data('Data/dummy.json.zip')
@@ -247,21 +110,22 @@ class MyTable(QTableView):
         return self.table
 
     """
-    Metoda vyhodnocuje podle tresholdu ktere predikce budou vyhodnoceny jako pozitivny
-    @param prediction_probas data pradikcí
-    @param prediction_label jmena predikci
-    @param treshold prah podle ktereho se vyhodnocuje zda bude predikce pozitivni nebo ne
-    @return pole (list) stringu, ktere znazornuji pozitivni diagnozy
-    """
+     Metoda vyhodnocuje podle tresholdu ktere predikce budou vyhodnoceny jako pozitivny
+     @param prediction_probas data pradikcí
+     @param prediction_label jmena predikci
+     @param treshold prah podle ktereho se vyhodnocuje zda bude predikce pozitivni nebo ne
+     @return pole (list) stringu, ktere znazornuji pozitivni diagnozy
+     """
+
     def compute_treshold(self, prediction_probas, prediction_label, threshold):
         evaluated_predictions = []
         str_of_one_prediction = ""
 
         for i in range(len(prediction_probas)):
             for j in range(len(prediction_probas[i])):
-                #porovnavani zda hodnota presahne prah
-                if(prediction_probas[i][j] > threshold):
-                    #pridani diagnozi do stringu diagnoz
+                # porovnavani zda hodnota presahne prah
+                if (prediction_probas[i][j] > threshold):
+                    # pridani diagnozi do stringu diagnoz
                     str_of_one_prediction += prediction_label[j] + ", ";
             # odstraneni posledni carky
             str_of_one_prediction = str_of_one_prediction[:-2]
@@ -271,6 +135,7 @@ class MyTable(QTableView):
 
     def on_selectionChanged(selfself, selected):
         print("hehe")
+
 
 """
 Trida predstavujici okno
