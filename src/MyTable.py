@@ -1,29 +1,13 @@
-"""
-@Author Lukáš Runt
-@Version 1.0
-"""
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtWidgets import QTableView, QGridLayout
 
-#imports
-import json
-import sys
-import zipfile
-from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import Qt, QCoreApplication
-from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget, QSlider, QLabel, QGridLayout, \
-    QMenuBar, QMainWindow, QTableView, QTableWidget, QStyledItemDelegate, QAction
-
-from ColumnFilter import ColumnFilter
-from DetailViewer import DetailViewer
-from DoublespinboxAndSlider import DoublespinboxAndSlider
-from Menu import Menu
-
+from src.ImportData import ImportData
 
 
 class MyTable(QTableView):
     """
     Trida MyTable se stara o vykreslovani tabulky
     """
-
 
     table = None
 
@@ -38,7 +22,7 @@ class MyTable(QTableView):
 
 
         # nacitani dat z JSONU
-        data = load_data('Data/dummy.json.zip')
+        data = ImportData.load_data('D:\ZSWI\ZSWI\Data\dummy.json.zip')
         # ulozeni hlavicky tabulky
         labels = ["report_ids"] + data["labels"] + ["gts"] + ["prediction"]
         gts = data["gts"]
@@ -135,86 +119,3 @@ class MyTable(QTableView):
 
     def on_selectionChanged(selfself, selected):
         print("hehe")
-
-
-"""
-Trida predstavujici okno
-"""
-class MainWindow(QMainWindow):
-
-    def __init__(self):
-        super(MainWindow, self).__init__()
-
-"""
-Metoda necita data z JSONU, at kompresovana nebo normalni 
-@return data from JSON
-"""
-def load_data(path):
-    if path.endswith(".zip"):
-        with zipfile.ZipFile(path) as zf:
-            jsonstring = zf.read(zf.filelist[0]).decode('utf-8')
-        data = json.loads(jsonstring)
-    else:
-        with open(path, 'r') as json_file:
-            data = json.load(json_file)
-    return data
-
-"""
-Metoda se stara o okno (velikost, text v titulku...) a sestavuje komponenty
-"""
-def window():
-    app = QApplication(sys.argv)
-
-    """
-    vbox = QVBoxLayout()
-    vbox.addWidget(myMenu)
-    vbox.addWidget(table)
-    #vbox.addWidget(mySlider)
-    """
-
-    #vytvoreni gridu
-    grid = QGridLayout()
-    #nastaveni mezer (jak daleko od okraje se budou vyreslovat komponenty)
-    grid.setSpacing(0)
-    grid.setContentsMargins(0, 0, 0, 0)
-
-    #vytvoreni komponent
-
-    myTable = MyTable()
-
-    #####
-
-    tb = myTable.getTable()
-    myMenu = Menu(tb)
-
-    #####
-
-    mySlider = DoublespinboxAndSlider()
-    descriptionData = load_data('Data/dummy_texts.json.zip')
-    detailViewer = DetailViewer(descriptionData)
-    #pridani komponent do gridu
-    grid.addWidget(myMenu, 0, 0)
-    grid.addWidget(detailViewer, 1, 0)
-    grid.addWidget(myTable, 2, 0)
-    grid.addWidget(mySlider, 3, 0)
-
-    #pridani gridu do okna
-    window = QWidget()
-    window.setLayout(grid)
-    window.setWindowTitle("Predikce")
-    window.resize(1080, 780)
-
-    window.show()
-
-    sys.exit(app.exec_())
-
-#vstupni bod programu
-if __name__ == "__main__":
-    window()
-
-    """
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    app.exec()
-    """
