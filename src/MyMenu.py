@@ -8,10 +8,8 @@ from ColumnFilter import ColumnFilter
 
 class Menu(QWidget):
     """
-    Trida Menu se stara o vykreslovani menu - cele zkopirovano z netu
+    Trida Menu se stara o vykreslovani menu
     """
-
-
 
     def __init__(self, tb):
         QWidget.__init__(self)
@@ -48,4 +46,7 @@ class Menu(QWidget):
         self.colFilter.show()
 
     def turnOf(self):
+        """
+        Vypnuti aplikace
+        """
         QCoreApplication.quit()

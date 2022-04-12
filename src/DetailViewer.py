@@ -6,10 +6,6 @@ from DetailWindow import DetailWindow
 
 
 class DetailViewer(QWidget):
-    textData = None
-    ids = None
-    texts = None
-    detailWindow = None
 
     def __init__(self, textData):
         super().__init__()

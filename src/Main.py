@@ -30,13 +30,6 @@ Metoda se stara o okno (velikost, text v titulku...) a sestavuje komponenty
 def window():
     app = QApplication(sys.argv)
 
-    """
-    vbox = QVBoxLayout()
-    vbox.addWidget(myMenu)
-    vbox.addWidget(table)
-    #vbox.addWidget(mySlider)
-    """
-
     #vytvoreni gridu
     grid = QGridLayout()
     #nastaveni mezer (jak daleko od okraje se budou vyreslovat komponenty)
@@ -54,7 +47,7 @@ def window():
 
     #####
 
-    mySlider = DoublespinboxAndSlider()
+    mySlider = DoublespinboxAndSlider(myTable)
     descriptionData = ImportData.load_data('D:\ZSWI\ZSWI\Data\dummy_texts.json.zip')
     detailViewer = DetailViewer(descriptionData)
     #pridani komponent do gridu
