@@ -20,7 +20,7 @@ class MyTable(QTableView):
 
 
         # nacitani dat z JSONU
-        data = ImportData.load_data('C:/Users/Lenovo/PycharmProjects/ZSWI/Data/report_cnn_512_lite_scenario3.json.zip')
+        data = ImportData.load_data('C:/Users/polac/Documents/Vysoká škola/KIV-ZSWI/pokus/ZSWI/Data/dummy.json.zip')
         # ulozeni hlavicky tabulky
         self.labels = ["report_ids"] + data["labels"] + ["gts"] + ["prediction"]
         gts = data["gts"]

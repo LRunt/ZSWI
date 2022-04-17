@@ -13,8 +13,10 @@ from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget, QSlider, QLabel,
 from DetailViewer import DetailViewer
 from DoublespinboxAndSlider import DoublespinboxAndSlider
 from src.ImportData import ImportData
+from src.MainController import MainController
 from src.MyMenu import Menu
 from src.MyTable import MyTable
+from src.MainView import MainView
 
 """
 Trida predstavujici okno
@@ -48,7 +50,7 @@ def window():
     #####
 
     mySlider = DoublespinboxAndSlider(myTable)
-    descriptionData = ImportData.load_data('D:\ZSWI\ZSWI\Data\dummy_texts.json.zip')
+    descriptionData = ImportData.load_data('C:/Users/polac/Documents/Vysoká škola/KIV-ZSWI/pokus/ZSWI/Data/dummy.json.zip')
     detailViewer = DetailViewer(descriptionData)
     #pridani komponent do gridu
     grid.addWidget(myMenu, 0, 0)
@@ -68,7 +70,8 @@ def window():
 
 #vstupni bod programu
 if __name__ == "__main__":
-    window()
+    #window()
+    m = MainView()
 
     """
     app = QApplication(sys.argv)
