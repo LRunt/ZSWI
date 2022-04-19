@@ -8,6 +8,7 @@ class MainController:
         self.data = None
         self.view = v
 
+
     def double_spinbox_changed(self, value):
         value2 = int(self.round2(value / self.view.doubleSpinbox.singleStep()))
         self.view.slider.setValue(value2)
@@ -76,7 +77,7 @@ class MainController:
             self.view.table.setItem(i, len(self.view.labels) - 1, it)
 
 
-    def on_selectionChanged(selfself, selected):
+    def on_selectionChanged(self, selected):
         print("hehe")
 
 
@@ -89,4 +90,21 @@ class MainController:
         else:
             if(self.data != None):
                 self.view.buildSmallTable(self.data)
+
+    def rowFilter(self, s):
+
+        for x in range(self.view.table.rowCount()):
+
+            currRow = ""
+
+            for y in range(self.view.table.columnCount()):
+                currRow += self.view.table.item(x, y).text()
+
+            if(s in str(currRow)):
+                self.view.table.showRow(x)
+            else:
+                self.view.table.hideRow(x)
+
+
+
 
