@@ -98,13 +98,6 @@ class MyTable(QTableView):
             it.setFlags(QtCore.Qt.ItemIsEnabled)
             self.table.setItem(i, len(self.labels) - 1, it)
 
-    def metoda(self):
-        it = QtWidgets.QTableWidgetItem()
-        it.setData(QtCore.Qt.DisplayRole, "vklad")
-        it.setFlags(QtCore.Qt.ItemIsEnabled)
-        self.table.setItem(0, 0, it)
-        #self.table
-
     def compute_treshold(self, prediction_probas, prediction_label, threshold):
         """
         Metoda vyhodnocuje podle tresholdu ktere predikce budou vyhodnoceny jako pozitivny
