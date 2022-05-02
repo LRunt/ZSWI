@@ -5,6 +5,7 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QTableView, QGridLayout
 
 from src.ColumnFilterView import ColumnFilterView
+from src.DetailWindow import DetailWindow
 from src.MainController import MainController
 
 
@@ -80,6 +81,7 @@ class MainView():
         return self.textbox
 
     def buildDescriptionButton(self):
+        #self.descriptionButton.clicked.connect(self.controller.findDescription)
         return self.descriptionButton
 
     def buildTableCheckBox(self):
@@ -139,7 +141,8 @@ class MainView():
         size_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         self.sliderButton.setSizePolicy(size_policy)
         self.sliderButton.setText("MAKE PREDICTION")
-        self.sliderButton.clicked.connect(self.controller.update_table)
+        self.sliderButton.clicked.connect(self.controller.reaction_on_prediction_button)
+        #self.sliderButton.clicked.connect(self.controller.pokus)
         return self.sliderButton
 
 
@@ -148,14 +151,16 @@ class MainView():
         options |= QFileDialog.DontUseNativeDialog
         fn, _ = QFileDialog.getOpenFileName(self.menubar, "QFileDialog.getOpenFileName()", "",
                                             "All Files (*);;Python Files (*.py)", options=options)
-        self.controller.loadData(fn)
+
+        if(fn):
+            self.controller.loadData(fn)
 
 
 
     def buildFullTable(self, data):
 
 
-        print("full")
+
         """
         self.table.clear()
         while (self.table.rowCount() > 0):
@@ -168,6 +173,7 @@ class MainView():
 
         # ulozeni hlavicky tabulky
         self.labels = ["report_ids"] + data["labels"] + ["gts"] + ["prediction"]
+        self.labels.append("precision")
 
         self.gts = data["gts"]
 
@@ -186,6 +192,8 @@ class MainView():
         self.table.setColumnCount(len(self.labels))
         self.table.setHorizontalHeaderLabels(self.labels)
 
+
+
         # nastaveni layoutu, ktery se bude predavat oknu
 
         i = 0
@@ -193,6 +201,8 @@ class MainView():
         prediction = self.controller.compute_treshold(self.prediction_probas, data["labels"], 50)
 
         self.table.selectionModel().selectionChanged.connect(self.controller.on_selectionChanged)
+
+
 
         # vkladani dat do tabulky
         for j in self.gts:
@@ -242,6 +252,7 @@ class MainView():
             self.table.setItem(i, j, it)
             i += 1
 
+
         return self.table
 
 
@@ -259,7 +270,12 @@ class MainView():
 
 
         # ulozeni hlavicky tabulky
+
+
+
         self.labels = ["report_ids"] + ["gts"] + ["prediction"] #+ self.data["labels"]
+        self.labels.append("precision")
+
         self.gts = data["gts"]
         self.report_ids = data["report_ids"]
         self.prediction_probas = data["prediction_probas"]
@@ -268,6 +284,8 @@ class MainView():
         # nastaveni poctu sloupu a vlozeni textu do sloupcu
 
         self.grid.addWidget(self.table, self.tableX, self.tableY)
+
+
 
         self.table.setColumnCount(len(self.labels))
         self.table.setHorizontalHeaderLabels(self.labels)
@@ -314,10 +332,16 @@ class MainView():
             it.setFlags(QtCore.Qt.ItemIsEnabled)
             self.table.setItem(i, j, it)
             i += 1
+
+
         return self.table
 
     def openColumnView(self):
         self.cf = ColumnFilterView(self)
         self.cf.show()
 
-
+    """
+    def openDetailView(self, index):
+        self.detailWindow = DetailWindow(self.ids[index], self.texts[index])
+        self.detailWindow.show()
+    """
