@@ -108,9 +108,11 @@ class MainController:
         if int == 2:
             if(self.data != None):
                 self.view.buildFullTable(self.data)
+
         else:
             if(self.data != None):
                 self.view.buildSmallTable(self.data)
+
 
     def rowFilter(self, s):
 
@@ -165,18 +167,20 @@ class MainController:
 
 
     """
-    Již při vytváření tabulky je přidán navíc právě jeden sloupec s názvem precision
-    V buňkách u tohoto sloupce nejsou na začátku žádná data, ale umožní to později (při stisku tlačítka např.) do buněk data vkládat
+    Již při vytváření tabulky je přidáno navíc několik sloupců
+    Při vytvoření tabulky se zavolá metoda evaluateData aby se rovnou naplnily budky precision recall a f1
     
     Při stisku tlačítka MAKE PREDICTION se volá metoda reaction_on_prediction_button
     Tato metoda se stará o to, že změní stringy s predikovanými labely a dále volá metodu evaluate data
     tato metoda obsahuje list listů se všemi daty viz její výpisy
     
-    Z tohoto listu listů si vytáhnu list obsahující precision ke všem řádkům
+    Z tohoto listu listů si vytáhnu list obsahující precision, recall a f1 ke všem řádkům
     
-    A tento list pošlu jako parametr metodě updateTableWithPrecision
+    pošlu tyto listy metodě updateTableWithEvaluatedData, jako parametr předávám list s daty (např precision) a název sloupce tabulky kam patří ("precision")
+    předpokládá se že ten slopec existuje, pokud by neexistoval bylo by to v čiči, ale je to ošetřeno,
+    takže pokud se tu pokusim přidat data do sloupce který neexistuje, nespadne to
     
-    Tato metoda list převezme a iteruje ho přičemž pokaždé setne budku tabulky
+    Metoda list převezme a iteruje ho přičemž pokaždé setne budku tabulky
     
     """
 
@@ -217,9 +221,12 @@ class MainController:
 
 
         precisionList = tmp.get("micro_precision")
+        recallList = tmp.get("micro_recall")
+        f1List = tmp.get("micro_f1")
 
-        self.updateTableWithPrecision(precisionList)
-
+        self.updateTableWithEvaluatedData(precisionList, "precision")
+        self.updateTableWithEvaluatedData(recallList,"recall")
+        self.updateTableWithEvaluatedData(f1List, "f1")
 
 
 
@@ -237,18 +244,22 @@ class MainController:
         return preds
 
 
-    def updateTableWithPrecision(self, precisionList):
-
+    #je zde důležitý předpoklad že název sloupce existuje
+    def updateTableWithEvaluatedData(self, listWithData, columnName):
         # tento for tu je protože my vlastně nevíme na kterém indexu se nachází sloupček precision
         # je třeba ten index najít
+        columnIndex = -1
         for i in range(self.view.table.columnCount()):
-            if(self.view.table.horizontalHeaderItem(i).text() == "precision"):
-                precisionIndex = i
+            if (self.view.table.horizontalHeaderItem(i).text() == columnName):
+                columnIndex = i
+
+        if(columnIndex != -1):
+            counter = 0
+            for v in listWithData:
+                it = QtWidgets.QTableWidgetItem()
+                it.setData(QtCore.Qt.DisplayRole, str(v))
+                self.view.table.setItem(counter, columnIndex, it)
+                counter = counter + 1
 
 
-        counter = 0
-        for v in precisionList:
-            it = QtWidgets.QTableWidgetItem()
-            it.setData(QtCore.Qt.DisplayRole, str(v))
-            self.view.table.setItem(counter, precisionIndex, it)
-            counter = counter + 1
+

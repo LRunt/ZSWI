@@ -174,6 +174,8 @@ class MainView():
         # ulozeni hlavicky tabulky
         self.labels = ["report_ids"] + data["labels"] + ["gts"] + ["prediction"]
         self.labels.append("precision")
+        self.labels.append("recall")
+        self.labels.append("f1")
 
         self.gts = data["gts"]
 
@@ -252,7 +254,7 @@ class MainView():
             self.table.setItem(i, j, it)
             i += 1
 
-
+        self.controller.evaluateData()
         return self.table
 
 
@@ -275,6 +277,8 @@ class MainView():
 
         self.labels = ["report_ids"] + ["gts"] + ["prediction"] #+ self.data["labels"]
         self.labels.append("precision")
+        self.labels.append("recall")
+        self.labels.append("f1")
 
         self.gts = data["gts"]
         self.report_ids = data["report_ids"]
@@ -333,7 +337,7 @@ class MainView():
             self.table.setItem(i, j, it)
             i += 1
 
-
+        self.controller.evaluateData()
         return self.table
 
     def openColumnView(self):
