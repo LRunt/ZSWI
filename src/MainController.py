@@ -60,19 +60,25 @@ class MainController:
         Method loads table data
         :return: built small table (table without labels)
         """
-        self.tableData = self.view.openFileDialog()
-        self.view.buildSmallTable(self.tableData)
+        try:
+            self.tableData = self.view.openFileDialog()
+            self.view.buildSmallTable(self.tableData)
+        except:
+            self.view.showDialog("Non-valid data")
 
     def loadDescriptions(self):
         """
         Method loads description data
         :return:
         """
-        self.descriptionData = self.view.openFileDialog()
-        self.ids = self.descriptionData["report_ids"]
-        self.texts = self.descriptionData["texts"]
-        #QMessageBox.information(self, 'Info', "Descriptions was loaded!")
-        print("Descriptions was loaded!")
+        try:
+            self.descriptionData = self.view.openFileDialog()
+            self.ids = self.descriptionData["report_ids"]
+            self.texts = self.descriptionData["texts"]
+            self.view.showDialog("Descriptions was loaded!")
+        except:
+            self.view.showDialog("Non-valid data")
+
 
     def loadData(self, path):
         """
