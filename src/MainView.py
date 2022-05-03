@@ -1,6 +1,6 @@
 
 import sys
-from PyQt5.QtWidgets import QApplication, QMenuBar, QWidget, QLineEdit, QPushButton, QFileDialog, QCheckBox
+from PyQt5.QtWidgets import QApplication, QMenuBar, QWidget, QLineEdit, QPushButton, QFileDialog, QCheckBox, QMessageBox
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QGridLayout
 
@@ -366,4 +366,14 @@ class MainView():
         """
         self.cf = ColumnFilterView(self)
         self.cf.show()
+
+    def showDialog(self, text):
+        msgBox = QMessageBox()
+        msgBox.setIcon(QMessageBox.Information)
+        msgBox.setText(text)
+        msgBox.setWindowTitle("QMessageBox Example")
+        msgBox.setStandardButtons(QMessageBox.Ok)
+
+        returnValue = msgBox.exec()
+
 

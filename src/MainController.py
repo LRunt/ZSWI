@@ -71,6 +71,7 @@ class MainController:
         self.descriptionData = self.view.openFileDialog()
         self.ids = self.descriptionData["report_ids"]
         self.texts = self.descriptionData["texts"]
+        #QMessageBox.information(self, 'Info', "Descriptions was loaded!")
         print("Descriptions was loaded!")
 
     def loadData(self, path):
@@ -93,6 +94,9 @@ class MainController:
         Method reacts on prediction button, after the button was pushed it makes a new prediction
         :return: new prediction
         """
+        if(self.tableData == None):
+            self.view.showDialog("Table is empty! Please load table data!")
+            return
         evaluated_predictions = self.computeTreshold(self.view.prediction_probas, self.view.label, self.view.slider.value())
         self.predictionColumn(evaluated_predictions)
 
@@ -182,22 +186,26 @@ class MainController:
         if in not found then it throws a window with text to user
         :return:
         """
-        if(re.match(r'[0-9]+', self.view.textbox.text())):
+        input = self.view.textbox.text()
+        if(input == ""):
+            return
+        if(self.descriptionData == None):
+            self.view.showDialog("Please, load description data!")
+            return
+        if(re.match(r'[0-9]+', input)):
             for i in range(len(self.ids)):
                 print(self.ids[i])
-                if(int(self.view.textbox.text()) == self.ids[i]):
+                if(int(input) == self.ids[i]):
                     print(self.ids[i])
-                    print(self.view.textbox.text())
+                    print(input)
                     print("Nasel jsem")
                     self.openDetailView(i)
+                    self.view.textbox.clear()
                     return
             #print("Nenasel jsem")
             #index nenalezen
-            QMessageBox.information(self, 'Info', "The index " + self.view.textbox.text() + " was not found", QMessageBox.Ok)
-        else:
-            #vstup neni cislo
-            #print("spatne")
-            QMessageBox.warning(self, 'Error', "The input \"" + self.view.textbox.text() + "\" is not a number: ", QMessageBox.Ok)
+        self.view.showDialog("The input \"" + input + "\" was not found")
+        self.view.textbox.clear()
 
     def openDetailView(self, index):
         """
