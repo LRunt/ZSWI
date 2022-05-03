@@ -13,7 +13,8 @@ this class contains all logic of application
 class MainController:
 
     def __init__(self, v):
-        self.data = None
+        self.tableData = None
+        self.descriptionData = None
         self.view = v
         self.help = 0
 
@@ -47,6 +48,20 @@ class MainController:
         value2 = float(Decimal(str(value)).quantize(Decimal(dicimals), rounding=ROUND_HALF_UP))
         return value2
 
+    def loadTable(self):
+        """
+        Method loads table data
+        :return: built small table (table without labels)
+        """
+        self.tableData = self.view.openFileDialog()
+        self.view.buildSmallTable(self.tableData)
+
+    def loadDescriptions(self):
+        """
+        Method loads description data
+        :return:
+        """
+        self.descriptionData = self.view.openFileDialog()
 
     def loadData(self, path):
         """
@@ -57,14 +72,11 @@ class MainController:
         if path.endswith(".zip"):
             with zipfile.ZipFile(path) as zf:
                 jsonstring = zf.read(zf.filelist[0]).decode('utf-8')
-            loadedData= json.loads(jsonstring)
+            loadedData = json.loads(jsonstring)
         else:
             with open(path, 'r') as json_file:
                 loadedData = json.load(json_file)
-        self.data = loadedData
-        self.view.buildSmallTable(self.data)
-
-
+        return loadedData
 
     def reactionOnPredictionButton(self):
         """
@@ -129,11 +141,11 @@ class MainController:
         :return: new table of datas
         """
         if int == 2:
-            if(self.data != None):
-                self.view.buildFullTable(self.data)
+            if(self.tableData != None):
+                self.view.buildFullTable(self.tableData)
         else:
-            if(self.data != None):
-                self.view.buildSmallTable(self.data)
+            if(self.tableData != None):
+                self.view.buildSmallTable(self.tableData)
 
 
     def rowFilter(self, s):

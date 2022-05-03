@@ -28,7 +28,6 @@ class MainView():
         self.slider = QtWidgets.QSlider()
         self.sliderButton = QtWidgets.QPushButton()
 
-
         self.grid = QGridLayout()
         self.grid.setSpacing(10)
         self.grid.setContentsMargins(10, 10, 10, 10)
@@ -47,7 +46,6 @@ class MainView():
         self.grid.addWidget(self.buildSlider(), 7, 0)
         self.grid.addWidget(self.buildSliderButton(), 8, 0)
 
-
         window = QWidget()
         window.setLayout(self.grid)
         window.setWindowTitle("Predikce")
@@ -63,9 +61,10 @@ class MainView():
         :return: menu
         """
         actionFile = self.menubar.addMenu("File")
-        actionFile.addAction("New")
-        actionFile.addAction("Open").triggered.connect(self.openFileDialog)
-        actionFile.addAction("Save")
+        #actionFile.addAction("New")
+        actionFile.addAction("Load data").triggered.connect(self.controller.loadTable)
+        actionFile.addAction("Load descriptions").triggered.connect(self.controller.loadDescriptions)
+        #actionFile.addAction("Save")
         actionFile.addSeparator()
         #actionFile.addAction("Quit").triggered.connect(self.turnOf)
         self.menubar.addMenu("Edit")
@@ -157,7 +156,7 @@ class MainView():
     def buildSliderButton(self):
         """
         Method creates slider button
-        :return:
+        :return: slider button
         """
         size_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         self.sliderButton.setSizePolicy(size_policy)
@@ -165,7 +164,6 @@ class MainView():
         self.sliderButton.clicked.connect(self.controller.reactionOnPredictionButton)
         #self.sliderButton.clicked.connect(self.controller.pokus)
         return self.sliderButton
-
 
     def openFileDialog(self):
         """
@@ -175,10 +173,9 @@ class MainView():
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         fn, _ = QFileDialog.getOpenFileName(self.menubar, "QFileDialog.getOpenFileName()", "",
-                                            "All Files (*);;Python Files (*.py)", options=options)
-
+                                            "JSON Files (*.json *.json.zip)", options=options)
         if(fn):
-            self.controller.loadData(fn)
+           return self.controller.loadData(fn)
 
 
     def buildFullTable(self, data):
@@ -187,7 +184,6 @@ class MainView():
         :param data: data which will showed
         :return: table with all columns
         """
-
 
         """
         self.table.clear()
