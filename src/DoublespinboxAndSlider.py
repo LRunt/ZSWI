@@ -78,19 +78,6 @@ class DoublespinboxAndSlider(QtWidgets.QWidget):
         value2 = float(Decimal(str(value)).quantize(Decimal(dicimals), rounding=ROUND_HALF_UP))
         return value2
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     def update_table(self):
         evaluated_predictions = self.table.computeTreshold(self.table.prediction_probas, self.table.label, self.slider.value())
         self.table.predictionColumn(evaluated_predictions)

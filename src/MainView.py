@@ -5,6 +5,7 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QGridLayout
 
 from src.ColumnFilterView import ColumnFilterView
+from src.DetailWindow import DetailWindow
 from src.MainController import MainController
 
 """
@@ -61,10 +62,8 @@ class MainView():
         :return: menu
         """
         actionFile = self.menubar.addMenu("File")
-        #actionFile.addAction("New")
         actionFile.addAction("Load data").triggered.connect(self.controller.loadTable)
         actionFile.addAction("Load descriptions").triggered.connect(self.controller.loadDescriptions)
-        #actionFile.addAction("Save")
         actionFile.addSeparator()
         #actionFile.addAction("Quit").triggered.connect(self.turnOf)
         self.menubar.addMenu("Edit")
@@ -88,7 +87,7 @@ class MainView():
         Description button opens description of record
         :return: description button
         """
-        #self.descriptionButton.clicked.connect(self.controller.findDescription)
+        self.descriptionButton.clicked.connect(self.controller.findDescription)
         return self.descriptionButton
 
     def buildTableCheckBox(self):
@@ -368,8 +367,3 @@ class MainView():
         self.cf = ColumnFilterView(self)
         self.cf.show()
 
-    """
-    def openDetailView(self, index):
-        self.detailWindow = DetailWindow(self.ids[index], self.texts[index])
-        self.detailWindow.show()
-    """

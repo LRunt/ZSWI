@@ -1,9 +1,14 @@
 import json
+import re
 from decimal import Decimal, ROUND_HALF_UP
 
 import numpy as np
 from PyQt5 import QtCore, QtGui, QtWidgets
 import zipfile
+
+from PyQt5.QtWidgets import QMessageBox
+
+from src.DetailWindow import DetailWindow
 from src.evaluation import evaluate_multiclass_multilabel
 
 """
@@ -15,6 +20,8 @@ class MainController:
     def __init__(self, v):
         self.tableData = None
         self.descriptionData = None
+        self.ids = None
+        self.texts = None
         self.view = v
         self.help = 0
 
@@ -62,6 +69,9 @@ class MainController:
         :return:
         """
         self.descriptionData = self.view.openFileDialog()
+        self.ids = self.descriptionData["report_ids"]
+        self.texts = self.descriptionData["texts"]
+        print("Descriptions was loaded!")
 
     def loadData(self, path):
         """
@@ -166,27 +176,37 @@ class MainController:
                 self.view.table.hideRow(x)
 
 
-    """
     def findDescription(self):
-        input = self.textbox.text()
-        if(re.match(r'[0-9]+', input)):
+        """
+        Method search description in list, if the description is founded it shows window with description
+        if in not found then it throws a window with text to user
+        :return:
+        """
+        if(re.match(r'[0-9]+', self.view.textbox.text())):
             for i in range(len(self.ids)):
                 print(self.ids[i])
-                if(int(input) == self.ids[i]):
+                if(int(self.view.textbox.text()) == self.ids[i]):
                     print(self.ids[i])
-                    print(input)
+                    print(self.view.textbox.text())
                     print("Nasel jsem")
-                    self.view.openDetailView(i)
+                    self.openDetailView(i)
                     return
             #print("Nenasel jsem")
             #index nenalezen
-            QMessageBox.information(self, 'Info', "The index " + input + " was not found", QMessageBox.Ok)
+            QMessageBox.information(self, 'Info', "The index " + self.view.textbox.text() + " was not found", QMessageBox.Ok)
         else:
             #vstup neni cislo
             #print("spatne")
-            QMessageBox.warning(self, 'Error', "The input \"" + input + "\" is not a number: ", QMessageBox.Ok)
-    """
+            QMessageBox.warning(self, 'Error', "The input \"" + self.view.textbox.text() + "\" is not a number: ", QMessageBox.Ok)
 
+    def openDetailView(self, index):
+        """
+        Method shows the window with description
+        :param index: index of description in array
+        :return: window with description
+        """
+        self.detailWindow = DetailWindow(self.ids[index], self.texts[index])
+        self.detailWindow.show()
 
     #------------------------------------------------------------------------------------------------
     #------------------------------------EVALUACE DAT------------------------------------------------
@@ -285,6 +305,4 @@ class MainController:
                 it.setData(QtCore.Qt.DisplayRole, str(v))
                 self.view.table.setItem(counter, columnIndex, it)
                 counter = counter + 1
-
-
 

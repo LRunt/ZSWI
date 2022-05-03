@@ -50,9 +50,9 @@ class DetailViewer(QWidget):
         else:
             #vstup neni cislo
             #print("spatne")
-            QMessageBox.warning(self, 'Error', "The input \"" + input + "\" is not a number: ", QMessageBox.Ok)
+            QMessageBox.warning(self, + input + "\" is not a number: ", QMessageBox.Ok)
 
-    """
+    """ 'Error', "The input \""
     Metoda zobrazi okno s detailem
     """
     def showDetail(self, index):
