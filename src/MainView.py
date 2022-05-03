@@ -1,21 +1,20 @@
 
 import sys
-from PyQt5.QtWidgets import QApplication, QGridLayout, QMenuBar, QWidget, QLineEdit, QPushButton, QFileDialog, QCheckBox
+from PyQt5.QtWidgets import QApplication, QMenuBar, QWidget, QLineEdit, QPushButton, QFileDialog, QCheckBox
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import QTableView, QGridLayout
+from PyQt5.QtWidgets import QGridLayout
 
 from src.ColumnFilterView import ColumnFilterView
-from src.DetailWindow import DetailWindow
 from src.MainController import MainController
 
-
-
+"""
+Class {@code MainView} represents the main window
+"""
 class MainView():
 
     def __init__(self):
 
         app = QApplication(sys.argv)
-
 
         self.controller = MainController(self)
 
@@ -58,11 +57,11 @@ class MainView():
         sys.exit(app.exec_())
 
 
-
     def buildMenu(self):
-
-
-
+        """
+        Method create menu in top of the window
+        :return: menu
+        """
         actionFile = self.menubar.addMenu("File")
         actionFile.addAction("New")
         actionFile.addAction("Open").triggered.connect(self.openFileDialog)
@@ -78,28 +77,46 @@ class MainView():
         return self.menubar
 
     def buildTextBox(self):
+        """
+        Method creates textBox
+        :return:  textBox
+        """
         return self.textbox
 
     def buildDescriptionButton(self):
+        """
+        Method creates description button
+        Description button opens description of record
+        :return: description button
+        """
         #self.descriptionButton.clicked.connect(self.controller.findDescription)
         return self.descriptionButton
 
     def buildTableCheckBox(self):
+        """
+        Method creates empty table
+        :return: empty table
+        """
         self.tableCheckBox.stateChanged.connect(self.controller.checkBoxChanged)
         return self.tableCheckBox
 
     def buildSearchTextBox(self):
+        """
+        Method creates textBox for searching records in the table
+        :return: search textBox
+        """
         self.searchTextBox.textChanged.connect(self.controller.rowFilter)
         return self.searchTextBox
 
     def buildDoubleSpinBox(self):
-
-
-
+        """
+        Method creates double spinbox, where user can type only numbers
+        :return: double spinBox
+        """
         minimum = 0
         maximum = 100
         step = 1
-        self.doubleSpinbox.valueChanged.connect(self.controller.double_spinbox_changed)
+        self.doubleSpinbox.valueChanged.connect(self.controller.doubleSpinboxChanged)
         size_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         self.doubleSpinbox.setSizePolicy(size_policy)
 
@@ -113,17 +130,18 @@ class MainView():
 
 
     def buildSlider(self):
-
+        """
+        Method creates slider connected with double spin box, after pushing slider button (button with text "make prediction")
+        it takes the number for slider and make prediction
+        :return: slider
+        """
         size_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         self.slider.setOrientation(QtCore.Qt.Horizontal)
         self.slider.setSizePolicy(size_policy)
-        self.slider.valueChanged.connect(self.controller.slider_changed)
+        self.slider.valueChanged.connect(self.controller.sliderChanged)
         #double_spinbox_range = self.double_spinbox.maximum() - self.double_spinbox.minimum()
         #slider_max = double_spinbox_range / self.double_spinbox.singleStep()
         self.slider.setMaximum(int(100))
-
-
-
 
         #self.buttonS.clicked.connect(self.update_table)
         minimum = 0
@@ -137,16 +155,23 @@ class MainView():
         return self.slider
 
     def buildSliderButton(self):
-
+        """
+        Method creates slider button
+        :return:
+        """
         size_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         self.sliderButton.setSizePolicy(size_policy)
         self.sliderButton.setText("MAKE PREDICTION")
-        self.sliderButton.clicked.connect(self.controller.reaction_on_prediction_button)
+        self.sliderButton.clicked.connect(self.controller.reactionOnPredictionButton)
         #self.sliderButton.clicked.connect(self.controller.pokus)
         return self.sliderButton
 
 
     def openFileDialog(self):
+        """
+        Method opens a file dialog where chose the file to open
+        :return: file dialog
+        """
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         fn, _ = QFileDialog.getOpenFileName(self.menubar, "QFileDialog.getOpenFileName()", "",
@@ -156,9 +181,12 @@ class MainView():
             self.controller.loadData(fn)
 
 
-
     def buildFullTable(self, data):
-
+        """
+        Method fill table with all columns - "Full table"
+        :param data: data which will showed
+        :return: table with all columns
+        """
 
 
         """
@@ -194,17 +222,13 @@ class MainView():
         self.table.setColumnCount(len(self.labels))
         self.table.setHorizontalHeaderLabels(self.labels)
 
-
-
         # nastaveni layoutu, ktery se bude predavat oknu
 
         i = 0
 
-        prediction = self.controller.compute_treshold(self.prediction_probas, data["labels"], 50)
+        prediction = self.controller.computeTreshold(self.prediction_probas, data["labels"], 50)
 
         self.table.selectionModel().selectionChanged.connect(self.controller.on_selectionChanged)
-
-
 
         # vkladani dat do tabulky
         for j in self.gts:
@@ -215,10 +239,10 @@ class MainView():
             it = QtWidgets.QTableWidgetItem()
             it.setData(QtCore.Qt.DisplayRole, self.report_ids[i])
             # zamezeni zmeny dat v bunce
-            # it.setFlags(QtCore.Qt.ItemIsEnabled)
+            it.setFlags(QtCore.Qt.ItemIsEnabled)
             # it.setFlags(QtCore.Qt.ItemIsSelectable)
             # it.setFlags(QtCore.Qt.ItemSelectionMode)
-            it.setSelected(True)
+            # it.setSelected(True)
             # nastaveni na prislusne misto
             self.table.setItem(i, j, it)
             j += 1
@@ -261,6 +285,12 @@ class MainView():
 
     def buildSmallTable(self, data):
         """
+        Method fill table without label columns
+        :param data: data what will be filled into the table
+        :return: full table
+        """
+
+        """
         self.table.clear()
         while (self.table.rowCount() > 0):
             self.table.removeRow(0)
@@ -270,11 +300,7 @@ class MainView():
         if(data == None):
             return self.table
 
-
         # ulozeni hlavicky tabulky
-
-
-
         self.labels = ["report_ids"] + ["gts"] + ["prediction"] #+ self.data["labels"]
         self.labels.append("precision")
         self.labels.append("recall")
@@ -289,15 +315,13 @@ class MainView():
 
         self.grid.addWidget(self.table, self.tableX, self.tableY)
 
-
-
         self.table.setColumnCount(len(self.labels))
         self.table.setHorizontalHeaderLabels(self.labels)
         i = 0
 
-        prediction = self.controller.compute_treshold(self.prediction_probas, data["labels"], 50)
+        prediction = self.controller.computeTreshold(self.prediction_probas, data["labels"], 50)
 
-        self.table.selectionModel().selectionChanged.connect(self.controller.on_selectionChanged)
+        #self.table.selectionModel().selectionChanged.connect(self.controller.on_selectionChanged)
 
         # vkladani dat do tabulky
         for j in self.gts:
@@ -341,6 +365,10 @@ class MainView():
         return self.table
 
     def openColumnView(self):
+        """
+        Method opens choseBox with column choice
+        :return: choseBox
+        """
         self.cf = ColumnFilterView(self)
         self.cf.show()
 

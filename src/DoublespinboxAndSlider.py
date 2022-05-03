@@ -92,8 +92,8 @@ class DoublespinboxAndSlider(QtWidgets.QWidget):
 
 
     def update_table(self):
-        evaluated_predictions = self.table.compute_treshold(self.table.prediction_probas, self.table.label, self.slider.value())
-        self.table.prediction_column(evaluated_predictions)
+        evaluated_predictions = self.table.computeTreshold(self.table.prediction_probas, self.table.label, self.slider.value())
+        self.table.predictionColumn(evaluated_predictions)
         #self.table.metoda()
 
 

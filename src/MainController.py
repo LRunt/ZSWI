@@ -1,68 +1,90 @@
 import json
 from decimal import Decimal, ROUND_HALF_UP
-import re
 
 import numpy as np
 from PyQt5 import QtCore, QtGui, QtWidgets
 import zipfile
-
-from PyQt5.QtGui import QStandardItemModel
-from PyQt5.QtWidgets import QMessageBox
-
 from src.evaluation import evaluate_multiclass_multilabel
 
-
+"""
+Class represents controller model of application,
+this class contains all logic of application
+"""
 class MainController:
 
     def __init__(self, v):
         self.data = None
         self.view = v
-
         self.help = 0
 
-
-    def double_spinbox_changed(self, value):
-        value2 = int(self.round2(value / self.view.doubleSpinbox.singleStep()))
+    def doubleSpinboxChanged(self, value):
+        """
+        Method reacts on change of spinBox
+        :param value: new value of spinbox
+        :return: changed value on slider
+        """
+        value2 = int(self.round(value / self.view.doubleSpinbox.singleStep()))
         self.view.slider.setValue(value2)
 
 
-    def slider_changed(self, value):
-        value2 = self.round2(float(value) * self.view.doubleSpinbox.singleStep())
+    def sliderChanged(self, value):
+        """
+        Method reacts on change of slider
+        :param value: new value of slider
+        :return: changed value on spinBox
+        """
+        value2 = self.round(float(value) * self.view.doubleSpinbox.singleStep())
         self.view.doubleSpinbox.setValue(value2)
         print(value)
 
-    def round2(self, value):
+    def round(self, value):
+        """
+        Method rounds numbers
+        :param value:
+        :return:
+        """
         dicimals = str(self.view.doubleSpinbox.singleStep() / 10.0)
         value2 = float(Decimal(str(value)).quantize(Decimal(dicimals), rounding=ROUND_HALF_UP))
         return value2
 
 
-
-
     def loadData(self, path):
-
+        """
+        Method loads (.json) data from device
+        :param path: path of file
+        :return: loaded data in list
+        """
         if path.endswith(".zip"):
             with zipfile.ZipFile(path) as zf:
                 jsonstring = zf.read(zf.filelist[0]).decode('utf-8')
-            dataa = json.loads(jsonstring)
+            loadedData= json.loads(jsonstring)
         else:
             with open(path, 'r') as json_file:
-                dataa = json.load(json_file)
-        self.data = dataa
+                loadedData = json.load(json_file)
+        self.data = loadedData
         self.view.buildSmallTable(self.data)
 
 
 
-
-    def reaction_on_prediction_button(self):
-
-        evaluated_predictions = self.compute_treshold(self.view.prediction_probas, self.view.label,self.view.slider.value())
-        self.prediction_column(evaluated_predictions)
+    def reactionOnPredictionButton(self):
+        """
+        Method reacts on prediction button, after the button was pushed it makes a new prediction
+        :return: new prediction
+        """
+        evaluated_predictions = self.computeTreshold(self.view.prediction_probas, self.view.label, self.view.slider.value())
+        self.predictionColumn(evaluated_predictions)
 
         self.evaluateData()
 
 
-    def compute_treshold(self, prediction_probas, prediction_label, threshold):
+    def computeTreshold(self, prediction_probas, prediction_label, threshold):
+        """
+        Method computes thresholds
+        :param prediction_probas: list of prediction probas
+        :param prediction_label: list of labels
+        :param threshold: (double) vlalue of prediction
+        :return: evaluated predictions
+        """
 
         evaluated_predictions = []
         str_of_one_prediction = ""
@@ -81,7 +103,12 @@ class MainController:
 
 
 
-    def prediction_column(self, evaluated_predictions):
+    def predictionColumn(self, evaluated_predictions):
+        """
+        Method create - rewrite the prediction column
+        :param evaluated_predictions: list of evaluated predictions
+        :return: prediction column
+        """
 
         for i in range(self.view.table.columnCount()):
 
@@ -93,31 +120,29 @@ class MainController:
             it.setData(QtCore.Qt.DisplayRole, evaluated_predictions[i])
             it.setFlags(QtCore.Qt.ItemIsEnabled)
 
-
-
             self.view.table.setItem(i, predictionIndex, it)
 
-
-    def on_selectionChanged(self, selected):
-        print("hehe")
-
-
     def checkBoxChanged(self, int):
-
-
+        """
+        Method reacts on change of checkbox, after change refill the table
+        :param int: button checked or unchecked
+        :return: new table of datas
+        """
         if int == 2:
             if(self.data != None):
                 self.view.buildFullTable(self.data)
-
         else:
             if(self.data != None):
                 self.view.buildSmallTable(self.data)
 
 
     def rowFilter(self, s):
-
+        """
+        Method filters lines in table
+        :param s: string what must the line contains
+        :return: table with hidden rows
+        """
         for x in range(self.view.table.rowCount()):
-
             currRow = ""
 
             for y in range(self.view.table.columnCount()):
@@ -127,16 +152,6 @@ class MainController:
                 self.view.table.showRow(x)
             else:
                 self.view.table.hideRow(x)
-
-
-
-
-
-
-
-
-
-
 
 
     """
@@ -187,8 +202,6 @@ class MainController:
 
     def evaluateData(self):
 
-
-
         labels = self.view.label.copy()
         prediction_probas = np.asarray(self.view.prediction_probas)
         gts = self.view.gts.copy()
@@ -199,7 +212,7 @@ class MainController:
 
         nplabels = np.asarray(labels)
 
-        preds = self._convert_probas_to_lbls(nplabels, prediction_probas, threshold)  # dle prahu vrati list listu s predikovanymi tridami (labely)
+        preds = self.convertProbasToLbls(nplabels, prediction_probas, threshold)  # dle prahu vrati list listu s predikovanymi tridami (labely)
         res = evaluate_multiclass_multilabel(gt=gts, pred=preds)
 
         # výpisy ------------------------------------------
@@ -231,7 +244,7 @@ class MainController:
 
 
     # melo by byt v poskytnutych skriptech v souboru utils.prediction_report
-    def _convert_probas_to_lbls(self, nplabels: np.ndarray, prediction_probas: np.ndarray, threshold: float):
+    def convertProbasToLbls(self, nplabels: np.ndarray, prediction_probas: np.ndarray, threshold: float):
         preds = []
         ppthresholded = (prediction_probas/100) >= threshold  # prahovani, dostanu true / false
 
