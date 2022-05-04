@@ -1,11 +1,11 @@
 
 import sys
-from PyQt5.QtWidgets import QApplication, QMenuBar, QWidget, QLineEdit, QPushButton, QFileDialog, QCheckBox, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMenuBar, QWidget, QLineEdit, QPushButton, QFileDialog, QCheckBox, \
+    QMessageBox
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QGridLayout
 
 from src.ColumnFilterView import ColumnFilterView
-from src.DetailWindow import DetailWindow
 from src.MainController import MainController
 
 """
@@ -326,10 +326,10 @@ class MainView():
             it = QtWidgets.QTableWidgetItem()
             it.setData(QtCore.Qt.DisplayRole, self.report_ids[i])
             # zamezeni zmeny dat v bunce
-            # it.setFlags(QtCore.Qt.ItemIsEnabled)
+            it.setFlags(QtCore.Qt.ItemIsEnabled)
             # it.setFlags(QtCore.Qt.ItemIsSelectable)
             # it.setFlags(QtCore.Qt.ItemSelectionMode)
-            it.setSelected(True)
+            #it.setSelected(True)
             # nastaveni na prislusne misto
             self.table.setItem(i, j, it)
             j += 1

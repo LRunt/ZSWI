@@ -265,9 +265,6 @@ class MainController:
         print("výsledky pro jednotlivé zprávy")
         tmp = res["samplewise_results"]
         for k, v in tmp.items():
-
-
-
             print(f"{k} - {v}")
 
         index = 0
@@ -316,7 +313,7 @@ class MainController:
             counter = 0
             for v in listWithData:
                 it = QtWidgets.QTableWidgetItem()
-                it.setData(QtCore.Qt.DisplayRole, str(v))
+                it.setData(QtCore.Qt.DisplayRole, '{:.2f}'.format(v))
                 self.view.table.setItem(counter, columnIndex, it)
                 counter = counter + 1
 
