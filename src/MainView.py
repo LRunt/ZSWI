@@ -321,7 +321,7 @@ class MainView():
             self.table.insertRow(self.table.rowCount())
             it = QtWidgets.QTableWidgetItem()
             it.setData(QtCore.Qt.DisplayRole, self.report_ids[i])
-            self.table.clicked.connect(self.openDetail)
+            self.table.doubleClicked.connect(self.openDetail)
             # zamezeni zmeny dat v bunce
             #it.setFlags(QtCore.Qt.ItemIsEnabled)
             # nastaveni na prislusne misto
@@ -339,14 +339,14 @@ class MainView():
             str = str[:-2]
             it = QtWidgets.QTableWidgetItem()
             it.setData(QtCore.Qt.DisplayRole, str)
-            it.setFlags(QtCore.Qt.ItemIsEnabled)
+            #it.setFlags(QtCore.Qt.ItemIsEnabled)
             self.table.setItem(i, j, it)
 
             # diagnozy vyhodnocene podle prahu
             j += 1
             it = QtWidgets.QTableWidgetItem()
             it.setData(QtCore.Qt.DisplayRole, prediction[i])
-            it.setFlags(QtCore.Qt.ItemIsEnabled)
+            #it.setFlags(QtCore.Qt.ItemIsEnabled)
             self.table.setItem(i, j, it)
             i += 1
 
@@ -363,7 +363,9 @@ class MainView():
 
     def openDetail(self, item):
         cellContent = item.data()
-        self.controller.findDescription(str(cellContent))
+        itemColumn = item.column()
+        if(itemColumn == 0):
+            self.controller.findDescription(str(cellContent))
 
     def showDialog(self, text):
         msgBox = QMessageBox()
