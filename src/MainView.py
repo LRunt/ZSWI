@@ -376,4 +376,9 @@ class MainView():
 
         returnValue = msgBox.exec()
 
+# vstupni bod programu
+if __name__ == "__main__":
+    # window()
+    m = MainView()
+
 
