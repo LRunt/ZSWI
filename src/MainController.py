@@ -186,31 +186,33 @@ class MainController:
                 self.view.table.hideRow(x)
 
 
-    def findDescription(self):
+    def buttonDecsriptionPushed(self):
+        if(self.view.textbox.text() == ""):
+            return
+        self.findDescription(self.view.textbox.text())
+
+    def findDescription(self, idOfDescription):
         """
         Method search description in list, if the description is founded it shows window with description
         if in not found then it throws a window with text to user
         :return:
         """
-        input = self.view.textbox.text()
-        if(input == ""):
-            return
         if(self.descriptionData == None):
             self.view.showDialog("Please, load description data!")
             return
-        if(re.match(r'[0-9]+', input)):
+        if(re.match(r'[0-9]+', idOfDescription)):
             for i in range(len(self.ids)):
                 print(self.ids[i])
-                if(int(input) == self.ids[i]):
+                if(int(idOfDescription) == self.ids[i]):
                     print(self.ids[i])
-                    print(input)
+                    print(idOfDescription)
                     print("Nasel jsem")
                     self.openDetailView(i)
                     self.view.textbox.clear()
                     return
             #print("Nenasel jsem")
             #index nenalezen
-        self.view.showDialog("The input \"" + input + "\" was not found")
+        self.view.showDialog("The input \"" + idOfDescription + "\" was not found")
         self.view.textbox.clear()
 
     def openDetailView(self, index):

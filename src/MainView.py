@@ -1,7 +1,7 @@
 
 import sys
 from PyQt5.QtWidgets import QApplication, QMenuBar, QWidget, QLineEdit, QPushButton, QFileDialog, QCheckBox, \
-    QMessageBox
+    QMessageBox, QTableWidget
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QGridLayout
 
@@ -87,7 +87,7 @@ class MainView():
         Description button opens description of record
         :return: description button
         """
-        self.descriptionButton.clicked.connect(self.controller.findDescription)
+        self.descriptionButton.clicked.connect(self.controller.buttonDecsriptionPushed)
         return self.descriptionButton
 
     def buildTableCheckBox(self):
@@ -285,11 +285,6 @@ class MainView():
         :return: full table
         """
 
-        """
-        self.table.clear()
-        while (self.table.rowCount() > 0):
-            self.table.removeRow(0)
-        """
         self.table = QtWidgets.QTableWidget()
 
         if(data == None):
@@ -319,17 +314,16 @@ class MainView():
         #self.table.selectionModel().selectionChanged.connect(self.controller.on_selectionChanged)
 
         # vkladani dat do tabulky
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         for j in self.gts:
             j = 0
             # vlozeni id
             self.table.insertRow(self.table.rowCount())
             it = QtWidgets.QTableWidgetItem()
             it.setData(QtCore.Qt.DisplayRole, self.report_ids[i])
+            self.table.clicked.connect(self.openDetail)
             # zamezeni zmeny dat v bunce
-            it.setFlags(QtCore.Qt.ItemIsEnabled)
-            # it.setFlags(QtCore.Qt.ItemIsSelectable)
-            # it.setFlags(QtCore.Qt.ItemSelectionMode)
-            #it.setSelected(True)
+            #it.setFlags(QtCore.Qt.ItemIsEnabled)
             # nastaveni na prislusne misto
             self.table.setItem(i, j, it)
             j += 1
@@ -366,6 +360,10 @@ class MainView():
         """
         self.cf = ColumnFilterView(self)
         self.cf.show()
+
+    def openDetail(self, item):
+        cellContent = item.data()
+        self.controller.findDescription(str(cellContent))
 
     def showDialog(self, text):
         msgBox = QMessageBox()
