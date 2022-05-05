@@ -317,6 +317,5 @@ class MainController:
                 it = QtWidgets.QTableWidgetItem()
                 it.setData(QtCore.Qt.DisplayRole, '{:.2%}'.format(v))
                 self.view.table.setItem(counter, columnIndex, it)
-                it.setFlags(QtCore.Qt.ItemIsEnabled)
                 counter = counter + 1
 

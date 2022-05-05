@@ -223,9 +223,10 @@ class MainView():
 
         prediction = self.controller.computeTreshold(self.prediction_probas, data["labels"], 50)
 
-        self.table.selectionModel().selectionChanged.connect(self.controller.on_selectionChanged)
+        #self.table.selectionModel().selectionChanged.connect(self.controller.on_selectionChanged)
 
         # vkladani dat do tabulky
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         for j in self.gts:
             j = 0
             # vlozeni id
@@ -233,11 +234,6 @@ class MainView():
 
             it = QtWidgets.QTableWidgetItem()
             it.setData(QtCore.Qt.DisplayRole, self.report_ids[i])
-            # zamezeni zmeny dat v bunce
-            it.setFlags(QtCore.Qt.ItemIsEnabled)
-            # it.setFlags(QtCore.Qt.ItemIsSelectable)
-            # it.setFlags(QtCore.Qt.ItemSelectionMode)
-            # it.setSelected(True)
             # nastaveni na prislusne misto
             self.table.setItem(i, j, it)
             j += 1
@@ -248,7 +244,6 @@ class MainView():
                 predikce = self.prediction_probas[i][j - 1]
                 it.setData(QtCore.Qt.DisplayRole, predikce)
                 # zakazani editovani bunky
-                it.setFlags(QtCore.Qt.ItemIsEnabled)
                 self.table.setItem(i, j, it)
                 j += 1
 
@@ -262,17 +257,16 @@ class MainView():
             str = str[:-2]
             it = QtWidgets.QTableWidgetItem()
             it.setData(QtCore.Qt.DisplayRole, str)
-            it.setFlags(QtCore.Qt.ItemIsEnabled)
             self.table.setItem(i, j, it)
 
             # diagnozy vyhodnocene podle prahu
             j += 1
             it = QtWidgets.QTableWidgetItem()
             it.setData(QtCore.Qt.DisplayRole, prediction[i])
-            it.setFlags(QtCore.Qt.ItemIsEnabled)
             self.table.setItem(i, j, it)
             i += 1
 
+        self.table.doubleClicked.connect(self.openDetail)
         self.controller.evaluateData()
         return self.table
 
@@ -321,7 +315,7 @@ class MainView():
             self.table.insertRow(self.table.rowCount())
             it = QtWidgets.QTableWidgetItem()
             it.setData(QtCore.Qt.DisplayRole, self.report_ids[i])
-            self.table.doubleClicked.connect(self.openDetail)
+            #self.table.doubleClicked.connect(self.openDetail)
             # zamezeni zmeny dat v bunce
             #it.setFlags(QtCore.Qt.ItemIsEnabled)
             # nastaveni na prislusne misto
@@ -350,6 +344,7 @@ class MainView():
             self.table.setItem(i, j, it)
             i += 1
 
+        self.table.doubleClicked.connect(self.openDetail)
         self.controller.evaluateData()
         return self.table
 
