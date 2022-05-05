@@ -193,7 +193,6 @@ class MainView():
         if (data == None):
             return self.table
 
-
         # ulozeni hlavicky tabulky
         self.labels = ["report_ids"] + data["labels"] + ["gts"] + ["prediction"]
         self.labels.append("precision")
@@ -268,6 +267,7 @@ class MainView():
 
         self.table.doubleClicked.connect(self.openDetail)
         self.controller.evaluateData()
+        self.table.setSortingEnabled(True)
         return self.table
 
 
@@ -280,6 +280,7 @@ class MainView():
         """
 
         self.table = QtWidgets.QTableWidget()
+        self.table.setSortingEnabled(True)
 
         if(data == None):
             return self.table
