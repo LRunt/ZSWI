@@ -1,7 +1,9 @@
 
 import sys
+
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QMenuBar, QWidget, QLineEdit, QPushButton, QFileDialog, QCheckBox, \
-    QMessageBox, QTableWidget
+    QMessageBox, QTableWidget, QLabel, QHBoxLayout
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QGridLayout
 
@@ -25,9 +27,35 @@ class MainView():
         self.table = QtWidgets.QTableWidget()
         self.tableCheckBox = QCheckBox("Full table")
         self.searchTextBox = QLineEdit()
+
+
+        self.lablePrecision = QLabel("Precision:")
+        self.lableRecall = QLabel("Recal:")
+        self.lableF1 = QLabel("F1:")
+
+        macroEvaluationsHBox = QHBoxLayout()
+        macroEvaluationsHBox.setSpacing(30)
+        macroEvaluationsHBox.setContentsMargins(0,5,5,5)
+        macroEvaluationsHBox.addWidget(self.lablePrecision)
+        macroEvaluationsHBox.addWidget(self.lableRecall)
+        macroEvaluationsHBox.addWidget(self.lableF1)
+        macroEvaluationsHBox.addStretch()
+
+
+
+
         self.doubleSpinbox = QtWidgets.QDoubleSpinBox()
         self.slider = QtWidgets.QSlider()
         self.sliderButton = QtWidgets.QPushButton()
+
+        spinnerHBox = QHBoxLayout()
+        spinnerHBox.setSpacing(5)
+        spinnerHBox.setContentsMargins(0, 0, 0, 10)
+        spinnerHBox.addWidget(self.buildDoubleSpinBox())
+        spinnerHBox.addWidget(self.buildSlider())
+        spinnerHBox.addWidget(self.buildSliderButton())
+
+
 
         self.grid = QGridLayout()
         self.grid.setSpacing(10)
@@ -43,9 +71,12 @@ class MainView():
         self.tableY = 0
         self.grid.addWidget(self.table, self.tableX, self.tableY)
 
-        self.grid.addWidget(self.buildDoubleSpinBox(), 6, 0)
-        self.grid.addWidget(self.buildSlider(), 7, 0)
-        self.grid.addWidget(self.buildSliderButton(), 8, 0)
+        self.grid.addLayout(macroEvaluationsHBox, 6,0)
+
+        #self.grid.addWidget(self.buildDoubleSpinBox(), 7, 0)
+        #self.grid.addWidget(self.buildSlider(), 8, 0)
+        #self.grid.addWidget(self.buildSliderButton(), 9, 0)
+        self.grid.addLayout(spinnerHBox,7,0)
 
         window = QWidget()
         window.setLayout(self.grid)
@@ -124,6 +155,9 @@ class MainView():
         self.doubleSpinbox.setValue(50)
 
         self.doubleSpinbox.setDecimals(len(str(step).split('.')[-1]))
+
+        self.doubleSpinbox.setFixedWidth(150)
+
         return self.doubleSpinbox
 
 
@@ -162,6 +196,7 @@ class MainView():
         self.sliderButton.setText("MAKE PREDICTION")
         self.sliderButton.clicked.connect(self.controller.reactionOnPredictionButton)
         #self.sliderButton.clicked.connect(self.controller.pokus)
+        self.sliderButton.setFixedWidth(150)
         return self.sliderButton
 
     def openFileDialog(self):

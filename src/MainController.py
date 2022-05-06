@@ -263,6 +263,16 @@ class MainController:
         preds = self.convertProbasToLbls(nplabels, prediction_probas, threshold)  # dle prahu vrati list listu s predikovanymi tridami (labely)
         res = evaluate_multiclass_multilabel(gt=gts, pred=preds)
 
+
+        macroPrecision = res["macro_precision"]
+        macroRecall = res["macro_recall"]
+        macroF1 = res["macro_f1"]
+
+        self.view.lablePrecision.setText("Makro precision: " + str(macroPrecision*100) + "%")
+        self.view.lableRecall.setText("Makro recall: " + str(macroRecall*100) + "%")
+        self.view.lableF1.setText("Makro F1: " + str(macroF1*100) + "%")
+
+
         # výpisy ------------------------------------------
         print("výsledky pro jednotlivé zprávy")
         tmp = res["samplewise_results"]
