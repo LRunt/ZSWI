@@ -97,11 +97,10 @@ class MainView():
         actionFile.addAction("Load descriptions").triggered.connect(self.controller.loadDescriptions)
         actionFile.addSeparator()
         #actionFile.addAction("Quit").triggered.connect(self.turnOf)
-        self.menubar.addMenu("Edit")
-        self.menubar.addMenu("View")
+
         settingsFile = self.menubar.addMenu("Settings")
         settingsFile.addAction("Column settings").triggered.connect(self.openColumnView)
-        self.menubar.addMenu("Help")
+
 
         return self.menubar
 
