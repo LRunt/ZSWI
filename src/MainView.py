@@ -2,7 +2,7 @@
 import sys
 
 from PyQt5.QtWidgets import QApplication, QMenuBar, QWidget, QLineEdit, QPushButton, QFileDialog, QCheckBox, \
-    QMessageBox, QTableWidget, QLabel, QHBoxLayout
+    QMessageBox, QTableWidget, QLabel, QHBoxLayout, QVBoxLayout
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QGridLayout
 
@@ -27,7 +27,6 @@ class MainView():
         self.tableCheckBox = QCheckBox("Full table")
         self.searchTextBox = QLineEdit()
 
-
         self.lablePrecision = QLabel("Precision:")
         self.lableRecall = QLabel("Recal:")
         self.lableF1 = QLabel("F1:")
@@ -40,9 +39,6 @@ class MainView():
         macroEvaluationsHBox.addWidget(self.lableF1)
         macroEvaluationsHBox.addStretch()
 
-
-
-
         self.doubleSpinbox = QtWidgets.QDoubleSpinBox()
         self.slider = QtWidgets.QSlider()
         self.sliderButton = QtWidgets.QPushButton()
@@ -54,31 +50,38 @@ class MainView():
         spinnerHBox.addWidget(self.buildSlider())
         spinnerHBox.addWidget(self.buildSliderButton())
 
-
+        self.vbox = QVBoxLayout()
 
         self.grid = QGridLayout()
         self.grid.setSpacing(10)
         self.grid.setContentsMargins(10, 10, 10, 10)
 
-        self.grid.addWidget(self.buildMenu(), 0, 0)
-        self.grid.addWidget(self.buildTextBox(), 1, 0)
-        self.grid.addWidget(self.buildDescriptionButton(), 2, 0)
-        self.grid.addWidget(self.buildTableCheckBox(), 3, 0)
-        self.grid.addWidget(self.buildSearchTextBox(), 4, 0)
+        #self.grid.addWidget(self.buildMenu(), 0, 0)
+        self.grid.addWidget(self.buildTextBox(), 0, 0)
+        self.grid.addWidget(self.buildDescriptionButton(), 1, 0)
+        self.grid.addWidget(self.buildTableCheckBox(), 2, 0)
+        self.grid.addWidget(self.buildSearchTextBox(), 3, 0)
 
-        self.tableX = 5
+        self.tableX = 4
         self.tableY = 0
         self.grid.addWidget(self.table, self.tableX, self.tableY)
 
-        self.grid.addLayout(macroEvaluationsHBox, 6,0)
+        self.grid.addLayout(macroEvaluationsHBox, 5,0)
 
         #self.grid.addWidget(self.buildDoubleSpinBox(), 7, 0)
         #self.grid.addWidget(self.buildSlider(), 8, 0)
         #self.grid.addWidget(self.buildSliderButton(), 9, 0)
-        self.grid.addLayout(spinnerHBox,7,0)
+        self.grid.addLayout(spinnerHBox,6,0)
+
+        self.vbox = QVBoxLayout()
+        self.vbox.addWidget(self.buildMenu())
+        self.vbox.addLayout(self.grid)
+
+        self.vbox.setSpacing(0)
+        self.vbox.setContentsMargins(0, 0, 0, 0)
 
         window = QWidget()
-        window.setLayout(self.grid)
+        window.setLayout(self.vbox)
         window.setWindowTitle("Predictions")
         window.resize(1080, 780)
         window.show()
@@ -191,7 +194,7 @@ class MainView():
         """
         size_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         self.sliderButton.setSizePolicy(size_policy)
-        self.sliderButton.setText("MAKE PREDICTION")
+        self.sliderButton.setText("Make prediction")
         self.sliderButton.clicked.connect(self.controller.reactionOnPredictionButton)
         #self.sliderButton.clicked.connect(self.controller.pokus)
         self.sliderButton.setFixedWidth(150)

@@ -58,7 +58,10 @@ class MainController:
         """
         try:
             self.tableData = self.view.openFileDialog()
-            self.view.buildSmallTable(self.tableData)
+            if(self.view.tableCheckBox.isChecked()):
+                self.view.buildFullTable(self.tableData)
+            else:
+                self.view.buildSmallTable(self.tableData)
         except:
             self.tableData = None
             self.view.showDialog("Non-valid data")
