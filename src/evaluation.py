@@ -36,7 +36,7 @@ def evaluate_multiclass_singlelabel(gt, pred, set_invalid_value_to_zero=False):
     results["labels"] = alllabels
     results["confusion_matrix"] = cm
     # log.info(f"Multiclass singlelabel evaluation results for {len(alllabels)} labels: {results}")
-    print(f"Multiclass singlelabel evaluation results for {len(alllabels)} labels: {results}")
+    #print(f"Multiclass singlelabel evaluation results for {len(alllabels)} labels: {results}")
     return results
 
 
@@ -80,7 +80,7 @@ def evaluate_multiclass_multilabel(gt, pred, set_invalid_value_to_zero=False):
     results = _eval_multiclass_multilabel(gt, pred, labels=alllabels, set_invalid_value_to_zero=set_invalid_value_to_zero)
     results["labels"] = alllabels
     # log.info(f"Multiclass multilabel evaluation results for {len(alllabels)} labels: {results}")
-    print(f"Multiclass multilabel evaluation results for {len(alllabels)} labels: {results}")
+    #print(f"Multiclass multilabel evaluation results for {len(alllabels)} labels: {results}")
     return results
 
 

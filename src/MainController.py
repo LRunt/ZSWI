@@ -3,11 +3,8 @@ import re
 from decimal import Decimal, ROUND_HALF_UP
 
 import numpy as np
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 import zipfile
-
-from PyQt5.QtWidgets import QMessageBox
-
 from src.DetailWindow import DetailWindow
 from src.evaluation import evaluate_multiclass_multilabel
 
@@ -43,7 +40,6 @@ class MainController:
         """
         value2 = self.round(float(value) * self.view.doubleSpinbox.singleStep())
         self.view.doubleSpinbox.setValue(value2)
-        print(value)
 
     def round(self, value):
         """
@@ -202,15 +198,10 @@ class MainController:
             return
         if(re.match(r'[0-9]+', idOfDescription)):
             for i in range(len(self.ids)):
-                print(self.ids[i])
                 if(int(idOfDescription) == self.ids[i]):
-                    print(self.ids[i])
-                    print(idOfDescription)
-                    print("Nasel jsem")
                     self.openDetailView(i)
                     self.view.textbox.clear()
                     return
-            #print("Nenasel jsem")
             #index nenalezen
         self.view.showDialog("The input \"" + idOfDescription + "\" was not found")
         self.view.textbox.clear()
@@ -268,14 +259,14 @@ class MainController:
         macroRecall = res["macro_recall"]
         macroF1 = res["macro_f1"]
 
-        self.view.lablePrecision.setText("Makro precision: " + str(macroPrecision*100) + "%")
-        self.view.lableRecall.setText("Makro recall: " + str(macroRecall*100) + "%")
-        self.view.lableF1.setText("Makro F1: " + str(macroF1*100) + "%")
+        self.view.lablePrecision.setText("Makro precision: " + '{:.2%}'.format(macroPrecision))
+        self.view.lableRecall.setText("Makro recall: " + '{:.2%}'.format(macroRecall))
+        self.view.lableF1.setText("Makro F1: " + '{:.2%}'.format(macroF1))
 
-
+        tmp = res["samplewise_results"]
+        """
         # výpisy ------------------------------------------
         print("výsledky pro jednotlivé zprávy")
-        tmp = res["samplewise_results"]
         for k, v in tmp.items():
             print(f"{k} - {v}")
 
@@ -286,7 +277,7 @@ class MainController:
         for k, v in tmp.items():
             print(f"\t{k} - {v[index]}")
         # konec výpisů----------------------------------------------------------------
-
+        """
 
         precisionList = tmp.get("micro_precision")
         recallList = tmp.get("micro_recall")
@@ -306,7 +297,6 @@ class MainController:
         for ppt in ppthresholded:
 
             predlabels = nplabels[ppt].tolist()  # pro jeden report vybere z labelu dle true / false (nutne aby nplabels byly jako numpy ndarray)
-            print("ttt")
             preds.append(predlabels)
 
         return preds

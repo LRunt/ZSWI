@@ -1,7 +1,6 @@
 
 import sys
 
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QMenuBar, QWidget, QLineEdit, QPushButton, QFileDialog, QCheckBox, \
     QMessageBox, QTableWidget, QLabel, QHBoxLayout
 from PyQt5 import QtWidgets, QtCore

@@ -3,7 +3,6 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QLabel, QLineEdit
 
-
 class ColumnFilterView(QWidget):
 
     def __init__(self, mv):
@@ -28,13 +27,6 @@ class ColumnFilterView(QWidget):
         self.layout.addWidget(self.listView)
 
         self.setLayout(self.layout)
-
-
-
-
-
-
-
 
     def makeListView(self):
         """
