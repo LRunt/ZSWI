@@ -60,6 +60,7 @@ class MainController:
             self.tableData = self.view.openFileDialog()
             self.view.buildSmallTable(self.tableData)
         except:
+            self.tableData = None
             self.view.showDialog("Non-valid data")
 
     def loadDescriptions(self):
@@ -73,6 +74,7 @@ class MainController:
             self.texts = self.descriptionData["texts"]
             self.view.showDialog("Descriptions were loaded!")
         except:
+            self.descriptionData = None
             self.view.showDialog("Non-valid data")
 
 
