@@ -22,10 +22,12 @@ class MainView():
 
         self.menubar = QMenuBar()
         self.textbox = QLineEdit()
+        self.textbox.setPlaceholderText("Enter index")
         self.descriptionButton = QPushButton('Description')
         self.table = QtWidgets.QTableWidget()
         self.tableCheckBox = QCheckBox("Full table")
         self.searchTextBox = QLineEdit()
+        self.searchTextBox.setPlaceholderText("Filter - enter the text you want to find")
 
         self.lablePrecision = QLabel("Precision:")
         self.lableRecall = QLabel("Recal:")
