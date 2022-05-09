@@ -80,7 +80,7 @@ class MainView():
 
         window = QWidget()
         window.setLayout(self.grid)
-        window.setWindowTitle("Predikce")
+        window.setWindowTitle("Predictions")
         window.resize(1080, 780)
         window.show()
 
@@ -205,7 +205,7 @@ class MainView():
         """
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fn, _ = QFileDialog.getOpenFileName(self.menubar, "QFileDialog.getOpenFileName()", "",
+        fn, _ = QFileDialog.getOpenFileName(self.menubar, "Data selection", "",
                                             "JSON Files (*.json *.json.zip)", options=options)
         if(fn):
            return self.controller.loadData(fn)
@@ -214,7 +214,7 @@ class MainView():
     def buildFullTable(self, data):
         """
         Method fill table with all columns - "Full table"
-        :param data: data which will showed
+        :param data: data which will be showed
         :return: table with all columns
         """
 
@@ -401,7 +401,7 @@ class MainView():
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setText(text)
-        msgBox.setWindowTitle("QMessageBox Example")
+        msgBox.setWindowTitle("Automatic diagnosis detection")
         msgBox.setStandardButtons(QMessageBox.Ok)
 
         returnValue = msgBox.exec()
