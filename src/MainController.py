@@ -75,7 +75,7 @@ class MainController:
             self.descriptionData = self.view.openFileDialog()
             self.ids = self.descriptionData["report_ids"]
             self.texts = self.descriptionData["texts"]
-            self.view.showDialog("Descriptions was loaded!")
+            self.view.showDialog("Descriptions were loaded!")
         except:
             self.view.showDialog("Non-valid data")
 

@@ -205,7 +205,7 @@ class MainView():
         """
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fn, _ = QFileDialog.getOpenFileName(self.menubar, "Data selection", "",
+        fn, _ = QFileDialog.getOpenFileName(self.menubar, "Data selection ", "",
                                             "JSON Files (*.json *.json.zip)", options=options)
         if(fn):
            return self.controller.loadData(fn)
