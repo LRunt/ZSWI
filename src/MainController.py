@@ -164,7 +164,15 @@ class MainController:
         """
         if int == 2:
             if(self.tableData != None):
-                self.view.buildFullTable(self.tableData)
+                print(len(self.view.label))
+                if(len(self.view.label) > 100):
+                    choise = self.view.showQuestionDialog()
+                    if(choise == 1024):
+                        self.view.buildFullTable(self.tableData)
+                    else:
+                        self.view.tableCheckBox.setChecked(False)
+                else:
+                    self.view.buildFullTable(self.tableData)
         else:
             if(self.tableData != None):
                 self.view.buildSmallTable(self.tableData)

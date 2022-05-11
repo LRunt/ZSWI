@@ -410,6 +410,18 @@ class MainView():
 
         returnValue = msgBox.exec()
 
+    def showQuestionDialog(self):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Warning)
+
+        msg.setText("More than 100 columns will be loaded!\nThis action can take a longer time.")
+        #msg.setInformativeText("This is additional information")
+        msg.setWindowTitle("Warning")
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+
+        retval = msg.exec_()
+        return retval
+
 # vstupni bod programu
 if __name__ == "__main__":
     # window()
