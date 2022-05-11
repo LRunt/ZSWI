@@ -164,9 +164,8 @@ class MainController:
         """
         if int == 2:
             if(self.tableData != None):
-                print(len(self.view.label))
                 if(len(self.view.label) > 100):
-                    choise = self.view.showQuestionDialog()
+                    choise = self.view.showQuestionDialog("More than 100 columns will be loaded!\nThis action can take a longer time.")
                     if(choise == 1024):
                         self.view.buildFullTable(self.tableData)
                     else:

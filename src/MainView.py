@@ -178,14 +178,9 @@ class MainView():
         #slider_max = double_spinbox_range / self.double_spinbox.singleStep()
         self.slider.setMaximum(int(100))
 
-        #self.buttonS.clicked.connect(self.update_table)
         minimum = 0
         maximum = 100
         step = 1
-        #self.set_single_step(step)
-        #self.slider.setMinimum(0)
-        #self.set_minimum(minimum)
-        #self.set_maximum(maximum)
 
         return self.slider
 
@@ -396,12 +391,22 @@ class MainView():
         self.cf.show()
 
     def openDetail(self, item):
+        """
+        Method opens detail of report (item)
+        :param item: item of table
+        :return: detail
+        """
         cellContent = item.data()
         itemColumn = item.column()
         if(itemColumn == 0):
             self.controller.findDescription(str(cellContent))
 
     def showDialog(self, text):
+        """
+        Method shows dialog
+        :param text: text of dialog window
+        :return: value of button
+        """
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setText(text)
@@ -410,11 +415,16 @@ class MainView():
 
         returnValue = msgBox.exec()
 
-    def showQuestionDialog(self):
+    def showQuestionDialog(self, text):
+        """
+        Method shows dialog with questions
+        :text: text of question dialog
+        :return: value of pushed button
+        """
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Warning)
 
-        msg.setText("More than 100 columns will be loaded!\nThis action can take a longer time.")
+        msg.setText(text)
         #msg.setInformativeText("This is additional information")
         msg.setWindowTitle("Warning")
         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
