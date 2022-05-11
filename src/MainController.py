@@ -58,6 +58,7 @@ class MainController:
         """
         try:
             self.tableData = self.view.openFileDialog()
+            self.view.slider.setValue(50);
             if(self.view.tableCheckBox.isChecked()):
                 self.view.buildFullTable(self.tableData)
             else:
