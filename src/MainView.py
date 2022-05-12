@@ -2,7 +2,7 @@
 import sys
 
 from PyQt5.QtWidgets import QApplication, QMenuBar, QWidget, QLineEdit, QPushButton, QFileDialog, QCheckBox, \
-    QMessageBox, QTableWidget, QLabel, QHBoxLayout, QVBoxLayout
+    QMessageBox, QTableWidget, QLabel, QHBoxLayout, QVBoxLayout, QProgressBar
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QGridLayout
 
@@ -74,6 +74,11 @@ class MainView():
         #self.grid.addWidget(self.buildSlider(), 8, 0)
         #self.grid.addWidget(self.buildSliderButton(), 9, 0)
         self.grid.addLayout(spinnerHBox,6,0)
+
+        self.pbar = QProgressBar()
+        self.pbar.setVisible(0)
+        self.grid.addWidget(self.pbar, 7, 0)
+
 
         self.vbox = QVBoxLayout()
         self.vbox.addWidget(self.buildMenu())
@@ -257,9 +262,15 @@ class MainView():
 
         #self.table.selectionModel().selectionChanged.connect(self.controller.on_selectionChanged)
 
+        rowCounter = 0
+        self.pbar.setMaximum(len(self.gts))
+        self.pbar.setVisible(1)
+
+
         # vkladani dat do tabulky
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         for j in self.gts:
+            self.pbar.setValue(rowCounter)
             j = 0
             # vlozeni id
             self.table.insertRow(self.table.rowCount())
@@ -297,10 +308,13 @@ class MainView():
             it.setData(QtCore.Qt.DisplayRole, prediction[i])
             self.table.setItem(i, j, it)
             i += 1
+            rowCounter = rowCounter + 1
 
         self.table.doubleClicked.connect(self.openDetail)
         self.controller.evaluateData()
         self.table.setSortingEnabled(True)
+        self.pbar.setValue(0)
+        self.pbar.setVisible(0)
         return self.table
 
 
@@ -341,9 +355,15 @@ class MainView():
 
         #self.table.selectionModel().selectionChanged.connect(self.controller.on_selectionChanged)
 
+        rowCounter = 0
+        self.pbar.setMaximum(len(self.gts))
+        self.pbar.setVisible(1)
+
         # vkladani dat do tabulky
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         for j in self.gts:
+            self.pbar.setValue(rowCounter)
+
             j = 0
             # vlozeni id
             self.table.insertRow(self.table.rowCount())
@@ -377,9 +397,12 @@ class MainView():
             #it.setFlags(QtCore.Qt.ItemIsEnabled)
             self.table.setItem(i, j, it)
             i += 1
+            rowCounter = rowCounter + 1
 
         self.table.doubleClicked.connect(self.openDetail)
         self.controller.evaluateData()
+        self.pbar.setValue(0)
+        self.pbar.setVisible(0)
         return self.table
 
     def openColumnView(self):

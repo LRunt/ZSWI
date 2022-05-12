@@ -5,6 +5,9 @@ from decimal import Decimal, ROUND_HALF_UP
 import numpy as np
 from PyQt5 import QtCore, QtWidgets
 import zipfile
+
+from PyQt5.uic.Compiler.qtproxies import QtGui
+
 from src.DetailWindow import DetailWindow
 from src.evaluation import evaluate_multiclass_multilabel
 
@@ -162,6 +165,8 @@ class MainController:
         :param int: button checked or unchecked
         :return: new table of datas
         """
+
+
         if int == 2:
             if(self.tableData != None):
                 if(len(self.view.label) > 100):
@@ -169,7 +174,8 @@ class MainController:
                     if(choise == 1024):
                         self.view.buildFullTable(self.tableData)
                     else:
-                        self.view.tableCheckBox.setChecked(False)
+                        #self.view.tableCheckBox.setChecked(False)
+                        self.view.tableCheckBox.click()
                 else:
                     self.view.buildFullTable(self.tableData)
         else:
